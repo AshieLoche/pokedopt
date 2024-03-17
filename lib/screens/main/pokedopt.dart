@@ -5,8 +5,16 @@ class Pokemon {
   final String name;
   final String imageUrl;
   final String description;
+  final String type;
+  final String personalName;
 
-  Pokemon({required this.name, required this.imageUrl,required this.description});
+  Pokemon({
+    required this.name,
+    required this.imageUrl,
+    required this.description,
+    required this.type,
+    required this.personalName,
+  });
 }
 
 class PokemonCard extends StatefulWidget {
@@ -48,10 +56,17 @@ class PokemonCardState extends State<PokemonCard> {
                   ),
                 ),
                 ListTile(
-                  contentPadding:
-                  const EdgeInsets.symmetric(vertical: 1.0, horizontal: 15.0),
-                  title: Text(widget.pokemon.name),
-                  subtitle: Text(widget.pokemon.description), // Display the dynamic description
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(widget.pokemon.personalName,style: const TextStyle(fontSize: 25,fontWeight: FontWeight.bold),),
+                      const SizedBox(height: 15,),// Display the dynamic Name
+                      Text(widget.pokemon.description),
+                      const SizedBox(height: 20,),// Display the dynamic description
+                      Text('Species: ${widget.pokemon.name}', style: const TextStyle(fontSize: 19,fontWeight: FontWeight.bold),),
+                      Text('Type: ${widget.pokemon.type}',style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold),), // Display the type
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -99,9 +114,9 @@ class PokeDoptState extends State<PokeDopt> {
 
 
   final List<Pokemon> pokemons = [
-    Pokemon(name: 'Gengar', imageUrl: 'assets/pokemon/gengar.jpg',description: 'To steal the life of its target, it slips into the prey’s shadow and silently waits for an opportunity.'),
-    Pokemon(name: 'Dragonite', imageUrl: 'assets/pokemon/dragonite.jpg',description: 'It is said that somewhere in the ocean lies an island where these gather. Only they live there.'),
-    Pokemon(name: 'Chandelure', imageUrl: 'assets/pokemon/chandelure.jpg',description: 'The spirits burned up in its ominous flame lose their way and wander this world forever.'),
+    Pokemon(personalName: 'My Pokemon 1',name: 'Gengar', imageUrl: 'assets/pokemon/gengar.jpg',description: 'To steal the life of its target, it slips into the prey’s shadow and silently waits for an opportunity.', type: 'Ghost/Poison'),
+    Pokemon(personalName: 'My Pokemon 2',name: 'Dragonite', imageUrl: 'assets/pokemon/dragonite.jpg',description: 'It is said that somewhere in the ocean lies an island where these gather. Only they live there.', type: 'Dragon'),
+    Pokemon(personalName: 'My Pokemon 3',name: 'Chandelure', imageUrl: 'assets/pokemon/chandelure.jpg',description: 'The spirits burned up in its ominous flame lose their way and wander this world forever.', type: 'Ghost'),
     // Add more Pokemon data here
   ];
 
