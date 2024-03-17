@@ -47,6 +47,7 @@ class AuthService {
       return e.toString();
     }
   }
+
   // Sign out
   Future signOut() async {
     try {
