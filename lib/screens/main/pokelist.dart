@@ -6,7 +6,7 @@ class PokeList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PokeList Page'), // Set app bar title to "Main Page"
+        title: const Text('PokeList Pages'), // Set app bar title to "Main Page"
       ),
       body: const Center(
         child: Text('Welcome to the PokeList Page!'),
@@ -36,7 +36,7 @@ class PokeList extends StatelessWidget {
               Navigator.pushNamed(context, '/PokeDopt');
               break;
             case 2:
-              Navigator.pushNamed(context, '/PokeList'); //Navigate to cart page
+              Navigator.pushNamed(context, '/PokeList');
               break;
           // You can add cases for other tabs if needed
           }

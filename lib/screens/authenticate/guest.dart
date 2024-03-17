@@ -78,7 +78,7 @@ class _GuestState extends State<Guest> {
                           // Add your login functionality here
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const PokeDopt()),
+                            MaterialPageRoute(builder: (context) => const PokeDopt(likedPokemons: [],)),
                           );
                         }
                       },
