@@ -1,3 +1,5 @@
+import 'package:pokedopt/services/database.dart';
+
 import '../models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:flutter/foundation.dart';
@@ -52,6 +54,9 @@ class AuthService {
     try {
       firebase.UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       firebase.User? user = result.user;
+
+      await DatabaseService(uid: user!.uid).updateUserData('0', 'Ash Ketchum', '21', 'Male', 'Ghost', 'Kalos');
+
       return _userFromFirebaseUser(user);
     } catch (e) {
       if (kDebugMode) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:pokedopt/services/auth.dart';
 
 class Profile extends StatefulWidget {
@@ -260,6 +261,15 @@ class EditProfileScreenState extends State<EditProfileScreen> {
     _mottoController.dispose();
     super.dispose();
   }
+  XFile? _pickedImage;
+
+  Future<void> _getImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+    setState(() {
+      _pickedImage = pickedFile;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -273,6 +283,10 @@ class EditProfileScreenState extends State<EditProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              ElevatedButton(
+                onPressed: () => _getImage(ImageSource.gallery),
+                child: const Text('Choose from Gallery'),
+              ),
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Name'),
