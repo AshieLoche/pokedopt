@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '../main/pokedopt.dart';
 import '../../services/auth.dart';
 
 class Guest extends StatefulWidget {
@@ -13,14 +11,259 @@ class Guest extends StatefulWidget {
 class _GuestState extends State<Guest> {
 
   final AuthService _auth = AuthService();
-  final _formKey = GlobalKey<FormState>();
+  final _loginFormKey = GlobalKey<FormState>();
+  late final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   // Text Field State
-  String email = '', password = '';
+  String email = '', password = '', confirmPassword = '', error = '';
+
+  void logInForm() {
+
+    setState(() {
+      email = '';
+      password = '';
+      confirmPassword = '';
+    });
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const SingleChildScrollView(
+            child: Column(
+              children: [
+                Text("Log In"),
+                Divider(),
+              ],
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: Form(
+              key: _loginFormKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (val) {
+                      setState(() => email = val);
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Password',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (val) {
+                      setState(() => password = val);
+                    },
+                    obscureText: true,
+                  ),
+                  Center(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        signUpForm();
+                      },
+                      child: const Text('Sign Up for Pokedopt'),
+                    ),
+                  ),
+                  const Divider(),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                print(email);
+                print(password);
+              },
+              child: const Text(
+                'Log In',
+                style: TextStyle(color: Colors.orange),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+  }
+
+  void signUpForm() {
+
+    final signupFormKey = GlobalKey<FormState>();
+
+    setState(() {
+      email = '';
+      password = '';
+      confirmPassword = '';
+    });
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const SingleChildScrollView(
+            child: Column(
+              children: [
+                Text("Sign Up"),
+                Divider(),
+              ],
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: Form(
+              key: signupFormKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      border: const OutlineInputBorder(),
+                      errorText: error.isNotEmpty ? error : null,
+                    ),
+                    validator: (val) => val!.isEmpty ? 'Enter an email' : null,
+                    onChanged: (val) {
+                      setState(() => email = val);
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: passwordController,
+                    decoration: const InputDecoration(
+                      labelText: 'Password',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Password is required';
+                      }
+
+                      final lowercaseRegex = RegExp(r'[a-z]');
+                      final uppercaseRegex = RegExp(r'[A-Z]');
+                      final digitRegex = RegExp(r'\d');
+                      final specialRegex = RegExp(r'\W');
+
+                      List<String> errors = [];
+
+                      if (!lowercaseRegex.hasMatch(value)) {
+                        errors.add('Must contain at least 1 lowercase');
+                      }
+                      if (!uppercaseRegex.hasMatch(value)) {
+                        errors.add('Must contain at least 1 uppercase');
+                      }
+                      if (!digitRegex.hasMatch(value)) {
+                        errors.add('Must contain at least 1 number');
+                      }
+                      if (!specialRegex.hasMatch(value)) {
+                        errors.add('Must contain at least 1 special char');
+                      }
+
+                      if (value.length < 8 || value.length > 12) {
+                        errors.add('Must be 8 - 12 chars long');
+                      }
+
+                      return errors.isEmpty ? null : errors.join('\n'); // Combine errors into a single string
+                    },
+                    onChanged: (val) {
+                      setState(() => password = val);
+                    },
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: confirmPasswordController,
+                    decoration: const InputDecoration(
+                      labelText: 'Confirm Password',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (val) => val != password || val!.isEmpty ? 'Incorrect Password' : null,
+                    onChanged: (val) {
+                      setState(() => confirmPassword = val);
+                    },
+                    obscureText: true,
+                  ),
+                  Center(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        logInForm();
+                      },
+                      child: const Text('Already have an account?'),
+                    ),
+                  ),
+                  const Divider(),
+                ],
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                passwordController.text = '';
+                confirmPasswordController.text = '';
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'), // Close button
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                // Perform sign-up functionality here
+                if (signupFormKey.currentState!.validate()) {
+                  dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+
+                  if (result == "[firebase_auth/email-already-in-use] The email address is already in use by another account." || result == "[firebase_auth/invalid-email] The email address is badly formatted.") {
+                    setState(() => error = result == "[firebase_auth/email-already-in-use] The email address is already in use by another account." ? 'Email is already in use' : 'Invalid Email');
+                    Navigator.of(context).pop();
+                    passwordController.text = '';
+                    confirmPasswordController.text = '';
+                    signUpForm();
+                  } else {
+                    setState(() => error = '');
+                    emailController.text = '';
+                    passwordController.text = '';
+                    confirmPasswordController.text = '';
+                    Navigator.of(context).pop();
+                  }
+
+                }
+              },
+              child: const Text('Sign Up', style: TextStyle(color: Colors.orange)),
+            ),
+          ],
+        );
+      },
+    );
+
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false, // Set to false to prevent resizing when keyboard appears
       appBar: AppBar(
         title: const Center(
           child: Text('PokéDopt'),
@@ -71,68 +314,8 @@ class _GuestState extends State<Guest> {
                     ElevatedButton(
                       onPressed: () {
 
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    Text("Log In"),
-                                    Divider(),
-                                  ],
-                                ),
-                              ),
-                              content: SingleChildScrollView(
-                                child: Form(
-                                  key: _formKey,
-                                  child: Column(
-                                    children: [
-                                      TextFormField(
-                                        decoration: const InputDecoration(
-                                          labelText: 'Email',
-                                          border: OutlineInputBorder(),
-                                        ),
-                                        onChanged: (val) {
-                                          setState(() => email = val);
-                                        },
-                                      ),
-                                      const SizedBox(height: 20),
-                                      TextFormField(
-                                        decoration: const InputDecoration(
-                                          labelText: 'Password',
-                                          border: OutlineInputBorder(),
-                                        ),
-                                        onChanged: (val) {
-                                          setState(() => password = val);
-                                        },
-                                        obscureText: true,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Close'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    print(email);
-                                    print(password);
-                                  },
-                                  child: const Text(
-                                    'Log In',
-                                    style: TextStyle(color: Colors.orange),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+
+                        logInForm();
 
 
                         // dynamic result = await _auth.signInAnon();
@@ -159,68 +342,9 @@ class _GuestState extends State<Guest> {
                     const SizedBox(height: 10), // Add space between the buttons
                     ElevatedButton(
                       onPressed: () {
-                        // Show the sign-up dialog
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    Text("Sign Up"),
-                                    Divider(),
-                                  ],
-                                ),
-                              ),
-                              content: SingleChildScrollView(
-                                child: Form(
-                                  key: _formKey,
-                                  child: Column(
-                                    children: [
-                                      TextFormField(
-                                        decoration: const InputDecoration(
-                                          labelText: 'Name',
-                                          border: OutlineInputBorder(),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      TextFormField(
-                                        decoration: const InputDecoration(
-                                          labelText: 'Password',
-                                          border: OutlineInputBorder(),
-                                        ),
-                                        obscureText: true,
-                                      ),
-                                      const SizedBox(height: 10),
-                                      TextFormField(
-                                        decoration: const InputDecoration(
-                                          labelText: 'Confirm Password',
-                                          border: OutlineInputBorder(),
-                                        ),
-                                        obscureText: true,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Close'), // Close button
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    // Perform sign-up functionality here
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Sign Up', style: TextStyle(color: Colors.orange)),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+
+                        signUpForm();
+
                       },
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
