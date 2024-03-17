@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../main/pokedopt.dart';
@@ -21,6 +22,7 @@ class _GuestState extends State<Guest> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false, // Set to false to prevent resizing when keyboard appears
       appBar: AppBar(
         title: const Center(
           child: Text('PokéDopt'),
@@ -91,17 +93,21 @@ class _GuestState extends State<Guest> {
                                       TextFormField(
                                         decoration: const InputDecoration(
                                           labelText: 'Email',
-                                          border: OutlineInputBorder(),
+                                          border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(Radius.circular(20))
+                                          ),
                                         ),
                                         onChanged: (val) {
                                           setState(() => email = val);
                                         },
                                       ),
-                                      const SizedBox(height: 20),
+                                      const SizedBox(height: 5),
                                       TextFormField(
                                         decoration: const InputDecoration(
                                           labelText: 'Password',
-                                          border: OutlineInputBorder(),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(20))
+                                          ),
                                         ),
                                         onChanged: (val) {
                                           setState(() => password = val);
@@ -181,22 +187,28 @@ class _GuestState extends State<Guest> {
                                       TextFormField(
                                         decoration: const InputDecoration(
                                           labelText: 'Name',
-                                          border: OutlineInputBorder(),
+                                          border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(Radius.circular(20))
+                                          ),
                                         ),
                                       ),
-                                      const SizedBox(height: 10),
+                                      const SizedBox(height: 5),
                                       TextFormField(
                                         decoration: const InputDecoration(
                                           labelText: 'Password',
-                                          border: OutlineInputBorder(),
+                                          border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(Radius.circular(20))
+                                          ),
                                         ),
                                         obscureText: true,
                                       ),
-                                      const SizedBox(height: 10),
+                                      const SizedBox(height: 5),
                                       TextFormField(
                                         decoration: const InputDecoration(
                                           labelText: 'Confirm Password',
-                                          border: OutlineInputBorder(),
+                                          border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(Radius.circular(20))
+                                          ),
                                         ),
                                         obscureText: true,
                                       ),
