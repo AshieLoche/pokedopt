@@ -86,6 +86,8 @@ class PokemonCardState extends State<PokemonCard> {
                       setState(() {
                         isLiked = !isLiked;
                         widget.onLiked(widget.pokemon.name);
+                        widget.onLiked(widget.pokemon.personalName);
+                        widget.onLiked(widget.pokemon.type);
                       });
                     },
                   ),
@@ -107,10 +109,12 @@ class PokeDopt extends StatefulWidget {
 
   @override
   PokeDoptState createState() => PokeDoptState();
+
 }
 
 class PokeDoptState extends State<PokeDopt> {
   List<String> likedPokemons = [];
+
 
 
   final List<Pokemon> pokemons = [
@@ -126,7 +130,13 @@ class PokeDoptState extends State<PokeDopt> {
       if (!likedPokemons.contains(pokemonName)) {
         likedPokemons.add(pokemonName);
       }
-    });
+    }); // Pass likedPokemons list to PokeList when navigating
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PokeList(likedPokemons: likedPokemons),
+      ),
+    );
   }
 
   @override
