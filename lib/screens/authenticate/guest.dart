@@ -118,10 +118,6 @@ class _GuestState extends State<Guest> {
                       loading = false;
                     });
                     logInForm();
-                  } else {
-                    setState(() => loginError = '');
-                    signUpEmailController.text = '';
-                    passwordController.text = '';
                   }
 
                 }
@@ -277,11 +273,6 @@ class _GuestState extends State<Guest> {
                       loading = false;
                     });
                     signUpForm();
-                  } else {
-                    setState(() => signUpError = '');
-                    signUpEmailController.text = '';
-                    passwordController.text = '';
-                    confirmPasswordController.text = '';
                   }
 
                 }
