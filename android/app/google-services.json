@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "77226759639",
+    "project_id": "pokedopt-c3b3f",
+    "storage_bucket": "pokedopt-c3b3f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:77226759639:android:39a64ed50cf6a8c7632792",
+        "android_client_info": {
+          "package_name": "com.ramos_loche_studio.pokedopt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdbNrbP36X1apDPp2l8xjmwchS2xUhFdE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
