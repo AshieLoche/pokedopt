@@ -86,8 +86,6 @@ class PokemonCardState extends State<PokemonCard> {
                       setState(() {
                         isLiked = !isLiked;
                         widget.onLiked(widget.pokemon.name);
-                        widget.onLiked(widget.pokemon.personalName);
-                        widget.onLiked(widget.pokemon.type);
                       });
                     },
                   ),
