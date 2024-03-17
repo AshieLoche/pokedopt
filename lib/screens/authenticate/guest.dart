@@ -148,7 +148,37 @@ class _GuestState extends State<Guest> {
                       labelText: 'Password',
                       border: OutlineInputBorder(),
                     ),
-                    validator: (val) => val!.length < 6 ? 'Enter a password 6+ chars long' : null,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Password is required';
+                      }
+
+                      final lowercaseRegex = RegExp(r'[a-z]');
+                      final uppercaseRegex = RegExp(r'[A-Z]');
+                      final digitRegex = RegExp(r'\d');
+                      final specialRegex = RegExp(r'\W');
+
+                      List<String> errors = [];
+
+                      if (!lowercaseRegex.hasMatch(value)) {
+                        errors.add('Must contain at least 1 lowercase');
+                      }
+                      if (!uppercaseRegex.hasMatch(value)) {
+                        errors.add('Must contain at least 1 uppercase');
+                      }
+                      if (!digitRegex.hasMatch(value)) {
+                        errors.add('Must contain at least 1 number');
+                      }
+                      if (!specialRegex.hasMatch(value)) {
+                        errors.add('Must contain at least 1 special char');
+                      }
+
+                      if (value.length < 8 || value.length > 12) {
+                        errors.add('Must be 8 - 12 chars long');
+                      }
+
+                      return errors.isEmpty ? null : errors.join('\n'); // Combine errors into a single string
+                    },
                     onChanged: (val) {
                       setState(() => password = val);
                     },
