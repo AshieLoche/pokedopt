@@ -13,12 +13,13 @@ void main() async {
 
   await Firebase.initializeApp(
     options: const FirebaseOptions(
-      apiKey: "AIzaSyAGxQhNtp3k_kZAn5oa1Cq0BZnd2oqahis",
-      appId: "1:78145003192:android:1c4b7557237ae34d0a9e4d",
-      messagingSenderId: "78145003192",
-      projectId: "brew-crew-fcf38",
+      apiKey: "AIzaSyCdbNrbP36X1apDPp2l8xjmwchS2xUhFdE",
+      appId: "1:77226759639:android:39a64ed50cf6a8c7632792",
+      messagingSenderId: "77226759639",
+      projectId: "pokedopt-c3b3f",
     ),
   );
+
   runApp(const MyApp());
 }
 
