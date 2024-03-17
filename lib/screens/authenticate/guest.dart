@@ -1,6 +1,5 @@
-
 import 'package:flutter/material.dart';
-// import '../../services/auth.dart';
+import '../../services/auth.dart';
 
 class Guest extends StatefulWidget {
   const Guest({super.key});
@@ -11,14 +10,22 @@ class Guest extends StatefulWidget {
 
 class _GuestState extends State<Guest> {
 
-  // final AuthService _auth = AuthService();
+  final AuthService _auth = AuthService();
   final _loginFormKey = GlobalKey<FormState>();
-  final _signupFormKey = GlobalKey<FormState>();
+  late final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   // Text Field State
-  String email = '', password = '', confirmPassword = '';
+  String email = '', password = '', confirmPassword = '', error = '';
 
   void logInForm() {
+
+    setState(() {
+      email = '';
+      password = '';
+      confirmPassword = '';
+    });
 
     showDialog(
       context: context,
@@ -97,6 +104,14 @@ class _GuestState extends State<Guest> {
 
   void signUpForm() {
 
+    final signupFormKey = GlobalKey<FormState>();
+
+    setState(() {
+      email = '';
+      password = '';
+      confirmPassword = '';
+    });
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -111,24 +126,29 @@ class _GuestState extends State<Guest> {
           ),
           content: SingleChildScrollView(
             child: Form(
-              key: _signupFormKey,
+              key: signupFormKey,
               child: Column(
                 children: [
                   TextFormField(
-                    decoration: const InputDecoration(
+                    controller: emailController,
+                    decoration: InputDecoration(
                       labelText: 'Email',
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
+                      errorText: error.isNotEmpty ? error : null,
                     ),
+                    validator: (val) => val!.isEmpty ? 'Enter an email' : null,
                     onChanged: (val) {
                       setState(() => email = val);
                     },
                   ),
                   const SizedBox(height: 10),
                   TextFormField(
+                    controller: passwordController,
                     decoration: const InputDecoration(
                       labelText: 'Password',
                       border: OutlineInputBorder(),
                     ),
+                    validator: (val) => val!.length < 6 ? 'Enter a password 6+ chars long' : null,
                     onChanged: (val) {
                       setState(() => password = val);
                     },
@@ -136,10 +156,12 @@ class _GuestState extends State<Guest> {
                   ),
                   const SizedBox(height: 10),
                   TextFormField(
+                    controller: confirmPasswordController,
                     decoration: const InputDecoration(
                       labelText: 'Confirm Password',
                       border: OutlineInputBorder(),
                     ),
+                    validator: (val) => val != password || val!.isEmpty ? 'Incorrect Password' : null,
                     onChanged: (val) {
                       setState(() => confirmPassword = val);
                     },
@@ -162,14 +184,33 @@ class _GuestState extends State<Guest> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
+                passwordController.text = '';
+                confirmPasswordController.text = '';
                 Navigator.of(context).pop();
               },
               child: const Text('Close'), // Close button
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 // Perform sign-up functionality here
-                Navigator.of(context).pop();
+                if (signupFormKey.currentState!.validate()) {
+                  dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+
+                  if (result == "[firebase_auth/email-already-in-use] The email address is already in use by another account." || result == "[firebase_auth/invalid-email] The email address is badly formatted.") {
+                    setState(() => error = result == "[firebase_auth/email-already-in-use] The email address is already in use by another account." ? 'Email is already in use' : 'Invalid Email');
+                    Navigator.of(context).pop();
+                    passwordController.text = '';
+                    confirmPasswordController.text = '';
+                    signUpForm();
+                  } else {
+                    setState(() => error = '');
+                    emailController.text = '';
+                    passwordController.text = '';
+                    confirmPasswordController.text = '';
+                    Navigator.of(context).pop();
+                  }
+
+                }
               },
               child: const Text('Sign Up', style: TextStyle(color: Colors.orange)),
             ),
@@ -178,6 +219,15 @@ class _GuestState extends State<Guest> {
       },
     );
 
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+
+    super.dispose();
   }
 
   @override
