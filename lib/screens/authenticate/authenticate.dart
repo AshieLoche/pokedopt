@@ -12,7 +12,6 @@ class _AuthenticateState extends State<Authenticate> {
 
   @override
   Widget build(BuildContext context) {
-    print('Authenticate');
     return const Guest();
   }
 }

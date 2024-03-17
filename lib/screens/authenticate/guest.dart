@@ -13,10 +13,13 @@ class Guest extends StatefulWidget {
 class _GuestState extends State<Guest> {
 
   final AuthService _auth = AuthService();
+  final _formKey = GlobalKey<FormState>();
+
+  // Text Field State
+  String email = '', password = '';
 
   @override
   Widget build(BuildContext context) {
-    print("Guest");
     return Scaffold(
       appBar: AppBar(
         title: const Center(
@@ -66,21 +69,86 @@ class _GuestState extends State<Guest> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed: () async {
+                      onPressed: () {
 
-                        dynamic result = await _auth.signInAnon();
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    Text("Log In"),
+                                    Divider(),
+                                  ],
+                                ),
+                              ),
+                              content: SingleChildScrollView(
+                                child: Form(
+                                  key: _formKey,
+                                  child: Column(
+                                    children: [
+                                      TextFormField(
+                                        decoration: const InputDecoration(
+                                          labelText: 'Email',
+                                          border: OutlineInputBorder(),
+                                        ),
+                                        onChanged: (val) {
+                                          setState(() => email = val);
+                                        },
+                                      ),
+                                      const SizedBox(height: 20),
+                                      TextFormField(
+                                        decoration: const InputDecoration(
+                                          labelText: 'Password',
+                                          border: OutlineInputBorder(),
+                                        ),
+                                        onChanged: (val) {
+                                          setState(() => password = val);
+                                        },
+                                        obscureText: true,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Close'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    print(email);
+                                    print(password);
+                                  },
+                                  child: const Text(
+                                    'Log In',
+                                    style: TextStyle(color: Colors.orange),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
 
-                        if (result == null) {
-                          if (kDebugMode) {
-                            print('Error signing in');
-                          }
-                        } else {
-                          // Add your login functionality here
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const PokeDopt()),
-                          );
-                        }
+
+                        // dynamic result = await _auth.signInAnon();
+                        //
+                        // if (result == null) {
+                        //   if (kDebugMode) {
+                        //     print('Error signing in');
+                        //   }
+                        // } else {
+                        //   // Add your login functionality here
+                        //   Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(builder: (context) => const PokeDopt()),
+                        //   );
+                        // }
+
                       },
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
@@ -96,12 +164,20 @@ class _GuestState extends State<Guest> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return SingleChildScrollView( // Wrap with SingleChildScrollView
-                              child: AlertDialog(
-                                title: const Center(child: Text("Sign Up")),
-                                content: SingleChildScrollView(
-                                  child: ListBody(
-                                    children: <Widget>[
+                            return AlertDialog(
+                              title: const SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    Text("Sign Up"),
+                                    Divider(),
+                                  ],
+                                ),
+                              ),
+                              content: SingleChildScrollView(
+                                child: Form(
+                                  key: _formKey,
+                                  child: Column(
+                                    children: [
                                       TextFormField(
                                         decoration: const InputDecoration(
                                           labelText: 'Name',
@@ -127,22 +203,22 @@ class _GuestState extends State<Guest> {
                                     ],
                                   ),
                                 ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('Close'), // Close button
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      // Perform sign-up functionality here
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('Sign Up', style: TextStyle(color: Colors.orange)),
-                                  ),
-                                ],
                               ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Close'), // Close button
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    // Perform sign-up functionality here
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Sign Up', style: TextStyle(color: Colors.orange)),
+                                ),
+                              ],
                             );
                           },
                         );
