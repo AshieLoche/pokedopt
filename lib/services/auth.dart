@@ -49,13 +49,22 @@ class AuthService {
   }
 
   // Register with email & password
-  Future registerWithEmailAndPassword(String email, String password) async
-  {
+  Future registerWithEmailAndPassword(String email, String password) async {
     try {
       firebase.UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       firebase.User? user = result.user;
 
-      await DatabaseService(uid: user!.uid).updateUserData('0', 'Ash Ketchum', '21', 'Male', 'Ghost', 'Kalos');
+      // Create a Map containing user data
+      Map<String, dynamic> userData = {
+        'name': 'Ash Ketchum',
+        'age': 21,
+        'gender': 'Male',
+        'favoritePokemonType': 'Ghost',
+        'region': 'Kalos'
+      };
+
+      // Call updateUserData with userId and userData Map
+      await DatabaseService().updateUserData(user!.uid, userData);
 
       return _userFromFirebaseUser(user);
     } catch (e) {
