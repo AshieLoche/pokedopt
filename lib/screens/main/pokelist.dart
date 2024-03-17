@@ -6,6 +6,8 @@ class PokeList extends StatelessWidget {
 
   const PokeList({super.key, required this.likedPokemons});
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,16 +16,32 @@ class PokeList extends StatelessWidget {
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
-      body: ListView.builder(
+      body:
+      ListView.builder(
         itemCount: likedPokemons.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(likedPokemons[index]),
-            leading: Image.asset(
-                'assets/pokemon/${likedPokemons[index].toLowerCase()}.jpg'),
+          return SizedBox(
+            child: Card(
+              elevation: 3,
+              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              child: GestureDetector(
+                onTap: () {
+                  showPokemonDialog(context, likedPokemons[index]);
+                },
+                child: ListTile(
+                  title: Text(likedPokemons[index]),
+                  leading: Image.asset(
+                    'assets/pokemon/${likedPokemons[index].toLowerCase()}.jpg',
+                    width: 50,
+                    height: 50,
+                  ),
+                ),
+              ),
+            ),
           );
         },
       ),
+
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -55,4 +73,27 @@ class PokeList extends StatelessWidget {
       ),
     );
   }
+  void showPokemonDialog(BuildContext context, String pokemonName) {
+
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Selected Pokemon'),
+          content: Text('You selected: $pokemonName'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }
+
