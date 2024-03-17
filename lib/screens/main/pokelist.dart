@@ -1,44 +1,55 @@
 import 'package:flutter/material.dart';
+
+
 class PokeList extends StatelessWidget {
-  const PokeList({super.key});
+  final List<String> likedPokemons;
+
+  const PokeList({super.key, required this.likedPokemons});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PokeList Pages'), // Set app bar title to "Main Page"
+        title: const Text('PokeList Pages'),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
       ),
-      body: const Center(
-        child: Text('Welcome to the PokeList Page!'),
+      body: ListView.builder(
+        itemCount: likedPokemons.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(likedPokemons[index]),
+            leading: Image.asset(
+                'assets/pokemon/${likedPokemons[index].toLowerCase()}.jpg'),
+          );
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle,color: Colors.orange,),
+            icon: Icon(Icons.account_circle, color: Colors.orange),
             label: 'Profile',
           ),
           BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/pokedopt.ico'),color: Colors.orange,),
-            label: 'PokeHome',
+            icon: ImageIcon(AssetImage('assets/pokedopt.ico'), color: Colors.orange),
+            label: 'PokeDopt',
           ),
           BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/pokepals.ico'),color: Colors.orange),
+            icon: ImageIcon(AssetImage('assets/pokepals.ico'), color: Colors.orange),
             label: 'PokeList',
           ),
         ],
         onTap: (int index) {
           switch (index) {
             case 0:
-              Navigator.pushNamed(context, '/Profile'); // Navigate to profile page
+              Navigator.pushNamed(context, '/Profile');
               break;
             case 1:
-            //palitan naten to from going to pokeDopt page it will refresh the homepage or go the uppper screen
               Navigator.pushNamed(context, '/PokeDopt');
               break;
             case 2:
               Navigator.pushNamed(context, '/PokeList');
               break;
-          // You can add cases for other tabs if needed
           }
         },
       ),

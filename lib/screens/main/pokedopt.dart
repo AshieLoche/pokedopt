@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedopt/screens/main/pokelist.dart';
 
 class Pokemon {
   final String name;
@@ -209,7 +210,7 @@ class PokeDoptState extends State<PokeDopt> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => PokeListPage(likedPokemons: likedPokemons),
+                  builder: (context) => PokeList(likedPokemons: likedPokemons),
                 ),
               );
               break;
@@ -220,61 +221,6 @@ class PokeDoptState extends State<PokeDopt> {
   }
 }
 
-class PokeListPage extends StatelessWidget {
-  final List<String> likedPokemons;
-
-  const PokeListPage({super.key, required this.likedPokemons});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('PokeList Pages'),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-      ),
-      body: ListView.builder(
-        itemCount: likedPokemons.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(likedPokemons[index]),
-            leading: Image.asset(
-                'assets/pokemon/${likedPokemons[index].toLowerCase()}.jpg'),
-          );
-        },
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle, color: Colors.orange),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/pokedopt.ico'), color: Colors.orange),
-            label: 'PokeDopt',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/pokepals.ico'), color: Colors.orange),
-            label: 'PokeList',
-          ),
-        ],
-        onTap: (int index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/Profile');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/PokeDopt');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/PokeList');
-              break;
-          }
-        },
-      ),
-    );
-  }
-}
 
 void main() {
   runApp(MyApp());
@@ -296,7 +242,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => PokeDopt(likedPokemons: likedPokemons),
         '/profile': (context) => PokeDopt(likedPokemons: likedPokemons),
         '/PokeHome': (context) => PokeDopt(likedPokemons: likedPokemons),
-        '/PokeList': (context) => PokeListPage(likedPokemons: likedPokemons),
+        '/PokeList': (context) => PokeList(likedPokemons: likedPokemons),
       },
     );
   }
