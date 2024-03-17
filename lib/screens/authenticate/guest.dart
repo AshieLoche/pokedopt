@@ -11,20 +11,27 @@ class Guest extends StatefulWidget {
 class _GuestState extends State<Guest> {
 
   final AuthService _auth = AuthService();
-  final _loginFormKey = GlobalKey<FormState>();
-  late final emailController = TextEditingController();
+  final signUpEmailController = TextEditingController();
+  final loginEmailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
   // Text Field State
-  String email = '', password = '', confirmPassword = '', error = '';
+  String email = '', password = '', confirmPassword = '', loginError = '', signUpError = '';
+  bool loginReload = false, signUpReload = false;
 
   void logInForm() {
 
+    final loginFormKey = GlobalKey<FormState>();
+
+    passwordController.text = '';
+    confirmPasswordController.text = '';
     setState(() {
       email = '';
       password = '';
       confirmPassword = '';
+      loginError = (loginReload) ? loginError : '';
+      loginReload = false;
     });
 
     showDialog(
@@ -41,24 +48,30 @@ class _GuestState extends State<Guest> {
           ),
           content: SingleChildScrollView(
             child: Form(
-              key: _loginFormKey,
+              key: loginFormKey,
               child: Column(
                 children: [
                   TextFormField(
-                    decoration: const InputDecoration(
+                    controller: loginEmailController,
+                    decoration: InputDecoration(
                       labelText: 'Email',
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
+                      errorText: loginError.isNotEmpty ? loginError : null,
                     ),
+                    validator: (val) => val!.isEmpty ? 'Enter an email' : null,
                     onChanged: (val) {
                       setState(() => email = val);
                     },
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
-                    decoration: const InputDecoration(
+                    controller: passwordController,
+                    decoration: InputDecoration(
                       labelText: 'Password',
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
+                      errorText: loginError.isNotEmpty ? loginError : null,
                     ),
+                    validator: (val) => val!.isEmpty ? 'Enter a password' : null,
                     onChanged: (val) {
                       setState(() => password = val);
                     },
@@ -87,8 +100,23 @@ class _GuestState extends State<Guest> {
             ),
             ElevatedButton(
               onPressed: () async {
-                print(email);
-                print(password);
+                // Perform sign-up functionality here
+                if (loginFormKey.currentState!.validate()) {
+                  dynamic result = await _auth.signInWithEmailAndPassword(email, password);
+
+                  if (result == null) {
+                    setState(() => loginError = 'Incorrect email or password');
+                    Navigator.of(context).pop();
+                    loginReload = true;
+                    logInForm();
+                  } else {
+                    setState(() => loginError = '');
+                    signUpEmailController.text = '';
+                    passwordController.text = '';
+                    Navigator.of(context).pop();
+                  }
+
+                }
               },
               child: const Text(
                 'Log In',
@@ -106,10 +134,14 @@ class _GuestState extends State<Guest> {
 
     final signupFormKey = GlobalKey<FormState>();
 
+    passwordController.text = '';
+    confirmPasswordController.text = '';
     setState(() {
       email = '';
       password = '';
       confirmPassword = '';
+      signUpError = (signUpReload) ? signUpError : '';
+      signUpReload = false;
     });
 
     showDialog(
@@ -130,11 +162,11 @@ class _GuestState extends State<Guest> {
               child: Column(
                 children: [
                   TextFormField(
-                    controller: emailController,
+                    controller: signUpEmailController,
                     decoration: InputDecoration(
                       labelText: 'Email',
                       border: const OutlineInputBorder(),
-                      errorText: error.isNotEmpty ? error : null,
+                      errorText: signUpError.isNotEmpty ? signUpError : null,
                     ),
                     validator: (val) => val!.isEmpty ? 'Enter an email' : null,
                     onChanged: (val) {
@@ -214,8 +246,6 @@ class _GuestState extends State<Guest> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                passwordController.text = '';
-                confirmPasswordController.text = '';
                 Navigator.of(context).pop();
               },
               child: const Text('Close'), // Close button
@@ -227,14 +257,13 @@ class _GuestState extends State<Guest> {
                   dynamic result = await _auth.registerWithEmailAndPassword(email, password);
 
                   if (result == "[firebase_auth/email-already-in-use] The email address is already in use by another account." || result == "[firebase_auth/invalid-email] The email address is badly formatted.") {
-                    setState(() => error = result == "[firebase_auth/email-already-in-use] The email address is already in use by another account." ? 'Email is already in use' : 'Invalid Email');
+                    setState(() => signUpError = result == "[firebase_auth/email-already-in-use] The email address is already in use by another account." ? 'Email is already in use' : 'Invalid Email');
                     Navigator.of(context).pop();
-                    passwordController.text = '';
-                    confirmPasswordController.text = '';
+                    signUpReload = true;
                     signUpForm();
                   } else {
-                    setState(() => error = '');
-                    emailController.text = '';
+                    setState(() => signUpError = '');
+                    signUpEmailController.text = '';
                     passwordController.text = '';
                     confirmPasswordController.text = '';
                     Navigator.of(context).pop();
@@ -253,7 +282,8 @@ class _GuestState extends State<Guest> {
 
   @override
   void dispose() {
-    emailController.dispose();
+    loginEmailController.dispose();
+    signUpEmailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
 
@@ -314,9 +344,7 @@ class _GuestState extends State<Guest> {
                     ElevatedButton(
                       onPressed: () {
 
-
                         logInForm();
-
 
                         // dynamic result = await _auth.signInAnon();
                         //
