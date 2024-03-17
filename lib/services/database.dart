@@ -1,22 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
-
-  final String uid;
-  DatabaseService({ required this.uid });
-
   // Collection Reference
-  final CollectionReference pokemonCollection = FirebaseFirestore.instance.collection('pokemons');
+  final CollectionReference pokemonCollection =
+  FirebaseFirestore.instance.collection('pokemons');
 
-  Future updateUserData(String pfp, String username, String age, String gender, String typePreference, String regionPreference) async {
-    return await pokemonCollection.doc(uid).set({
-      'pfp': pfp,
-      'username': username,
-      'age': age,
-      'gender': gender,
-      'type_preference': typePreference,
-      'region_preference': regionPreference,
-    });
+  Future<void> updateUserData(String userId, Map<String, dynamic> userData) async {
+    try {
+      await pokemonCollection.doc(userId).update(userData);
+      print('User data updated successfully');
+    } catch (error) {
+      print('Failed to update user data: $error');
+      throw error; // Rethrow the error to handle it in the calling code if necessary
+    }
   }
-
 }

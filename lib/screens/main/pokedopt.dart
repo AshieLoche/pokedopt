@@ -19,7 +19,7 @@ class Pokemon {
 
 class PokemonCard extends StatefulWidget {
   final Pokemon pokemon;
-  final Function(String) onLiked;
+  final Function(Pokemon) onLiked;
   final String description;
 
   const PokemonCard({super.key, required this.pokemon, required this.onLiked,required this.description});
@@ -59,12 +59,12 @@ class PokemonCardState extends State<PokemonCard> {
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(widget.pokemon.personalName,style: const TextStyle(fontSize: 25,fontWeight: FontWeight.bold),),
-                      const SizedBox(height: 15,),// Display the dynamic Name
+                      Text(widget.pokemon.personalName, style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 15,),
                       Text(widget.pokemon.description),
-                      const SizedBox(height: 20,),// Display the dynamic description
-                      Text('Species: ${widget.pokemon.name}', style: const TextStyle(fontSize: 19,fontWeight: FontWeight.bold),),
-                      Text('Type: ${widget.pokemon.type}',style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold),), // Display the type
+                      const SizedBox(height: 20,),
+                      Text('Species: ${widget.pokemon.name}', style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
+                      Text('Type: ${widget.pokemon.type}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
@@ -85,7 +85,7 @@ class PokemonCardState extends State<PokemonCard> {
                     onPressed: () {
                       setState(() {
                         isLiked = !isLiked;
-                        widget.onLiked(widget.pokemon.name);
+                        widget.onLiked(widget.pokemon); // Pass the entire Pokemon object
                       });
                     },
                   ),
@@ -100,7 +100,7 @@ class PokemonCardState extends State<PokemonCard> {
 }
 
 class PokeDopt extends StatefulWidget {
-  final List<String> likedPokemons;
+  final List<Pokemon> likedPokemons;
 
   const PokeDopt({super.key, required this.likedPokemons});
 
@@ -111,7 +111,7 @@ class PokeDopt extends StatefulWidget {
 }
 
 class PokeDoptState extends State<PokeDopt> {
-  List<String> likedPokemons = [];
+  List<Pokemon> likedPokemons = [];
 
 
 
@@ -123,10 +123,10 @@ class PokeDoptState extends State<PokeDopt> {
   ];
 
   // Function to update likedPokemons list
-  void updateLikedPokemons(String pokemonName) {
+  void updateLikedPokemons(Pokemon pokemons) {
     setState(() {
-      if (!likedPokemons.contains(pokemonName)) {
-        likedPokemons.add(pokemonName);
+      if (!likedPokemons.contains(pokemons)) {
+        likedPokemons.add(pokemons);
       }
     }); // Pass likedPokemons list to PokeList when navigating
     Navigator.pushReplacement(
@@ -192,10 +192,10 @@ class PokeDoptState extends State<PokeDopt> {
                 final pokemon = pokemons[index];
                 return PokemonCard(
                   pokemon: pokemon,
-                  onLiked: (String pokemonName) {
+                  onLiked: (Pokemon pokemon) {
                     setState(() {
-                      if (!likedPokemons.contains(pokemonName)) {
-                        likedPokemons.add(pokemonName);
+                      if (!likedPokemons.contains(pokemon)) {
+                        likedPokemons.add(pokemon);
                       }
                     });
                   },
@@ -250,7 +250,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  final List<String> likedPokemons = [];
+  final List<Pokemon> likedPokemons = [];
 
   MyApp({super.key});
 
