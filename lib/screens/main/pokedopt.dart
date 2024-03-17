@@ -13,8 +13,7 @@ class PokemonCard extends StatefulWidget {
   final Function(String) onLiked;
   final String description;
 
-  const PokemonCard({Key? key, required this.pokemon, required this.onLiked,required this.description})
-      : super(key: key);
+  const PokemonCard({super.key, required this.pokemon, required this.onLiked,required this.description});
 
   @override
   PokemonCardState createState() => PokemonCardState();
@@ -87,7 +86,7 @@ class PokemonCardState extends State<PokemonCard> {
 class PokeDopt extends StatefulWidget {
   final List<String> likedPokemons;
 
-  const PokeDopt({Key? key, required this.likedPokemons}) : super(key: key);
+  const PokeDopt({super.key, required this.likedPokemons});
 
 
   @override
@@ -224,7 +223,7 @@ class PokeDoptState extends State<PokeDopt> {
 class PokeListPage extends StatelessWidget {
   final List<String> likedPokemons;
 
-  const PokeListPage({Key? key, required this.likedPokemons}) : super(key: key);
+  const PokeListPage({super.key, required this.likedPokemons});
 
   @override
   Widget build(BuildContext context) {
