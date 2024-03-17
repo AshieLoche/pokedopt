@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/auth.dart';
+import '../../shared/loading.dart';
 
 class Guest extends StatefulWidget {
   const Guest({super.key});
@@ -19,6 +20,7 @@ class _GuestState extends State<Guest> {
   // Text Field State
   String email = '', password = '', confirmPassword = '', loginError = '', signUpError = '';
   bool loginReload = false, signUpReload = false;
+  bool loading = false;
 
   void logInForm() {
 
@@ -51,6 +53,7 @@ class _GuestState extends State<Guest> {
               key: loginFormKey,
               child: Column(
                 children: [
+                  const SizedBox(height: 5),
                   TextFormField(
                     controller: loginEmailController,
                     decoration: InputDecoration(
@@ -102,21 +105,27 @@ class _GuestState extends State<Guest> {
               onPressed: () async {
                 // Perform sign-up functionality here
                 if (loginFormKey.currentState!.validate()) {
+
+                  Navigator.of(context).pop();
+                  setState(() => loading = true);
+
                   dynamic result = await _auth.signInWithEmailAndPassword(email, password);
 
                   if (result == null) {
-                    setState(() => loginError = 'Incorrect email or password');
-                    Navigator.of(context).pop();
-                    loginReload = true;
+                    setState(() {
+                      loginError = 'Incorrect email or password';
+                      loginReload = true;
+                      loading = false;
+                    });
                     logInForm();
                   } else {
                     setState(() => loginError = '');
                     signUpEmailController.text = '';
                     passwordController.text = '';
-                    Navigator.of(context).pop();
                   }
 
                 }
+
               },
               child: const Text(
                 'Log In',
@@ -161,6 +170,7 @@ class _GuestState extends State<Guest> {
               key: signupFormKey,
               child: Column(
                 children: [
+                  const SizedBox(height: 5),
                   TextFormField(
                     controller: signUpEmailController,
                     decoration: InputDecoration(
@@ -254,19 +264,24 @@ class _GuestState extends State<Guest> {
               onPressed: () async {
                 // Perform sign-up functionality here
                 if (signupFormKey.currentState!.validate()) {
+
+                  Navigator.of(context).pop();
+                  setState(() => loading = true);
+
                   dynamic result = await _auth.registerWithEmailAndPassword(email, password);
 
                   if (result == "[firebase_auth/email-already-in-use] The email address is already in use by another account." || result == "[firebase_auth/invalid-email] The email address is badly formatted.") {
-                    setState(() => signUpError = result == "[firebase_auth/email-already-in-use] The email address is already in use by another account." ? 'Email is already in use' : 'Invalid Email');
-                    Navigator.of(context).pop();
-                    signUpReload = true;
+                    setState(() {
+                      signUpError = result == "[firebase_auth/email-already-in-use] The email address is already in use by another account." ? 'Email is already in use' : 'Invalid Email';
+                      signUpReload = true;
+                      loading = false;
+                    });
                     signUpForm();
                   } else {
                     setState(() => signUpError = '');
                     signUpEmailController.text = '';
                     passwordController.text = '';
                     confirmPasswordController.text = '';
-                    Navigator.of(context).pop();
                   }
 
                 }
@@ -292,7 +307,7 @@ class _GuestState extends State<Guest> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading ? const Loading() : Scaffold(
       resizeToAvoidBottomInset: false, // Set to false to prevent resizing when keyboard appears
       appBar: AppBar(
         title: const Center(

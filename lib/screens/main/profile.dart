@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokedopt/services/auth.dart';
 
-import '../authenticate/guest.dart';
-import '../wrapper.dart';
-
 class Profile extends StatefulWidget {
   const Profile({super.key});
 
@@ -12,7 +9,7 @@ class Profile extends StatefulWidget {
 }
 
 class ProfileState extends State<Profile> {
-  String name = 'Ashe Loche';
+  String name = 'Ashie Loche';
   String nickname = ' ';
   String gender = ' ';
   String status = ' ';
