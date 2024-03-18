@@ -54,17 +54,8 @@ class AuthService {
       firebase.UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       firebase.User? user = result.user;
 
-      // Create a Map containing user data
-      Map<String, dynamic> userData = {
-        'name': 'Ash Ketchum',
-        'age': 21,
-        'gender': 'Male',
-        'favoritePokemonType': 'Ghost',
-        'region': 'Kalos'
-      };
-
       // Call updateUserData with userId and userData Map
-      await DatabaseService().updateUserData(user!.uid, userData);
+      await DatabaseService().updateUserData('0', 'Ash Ketchum', '21', 'Male', 'Ghost', 'Kalos');
 
       return _userFromFirebaseUser(user);
     } catch (e) {
