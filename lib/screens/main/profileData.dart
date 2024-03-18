@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 class ProfileInfo extends StatefulWidget {
   const ProfileInfo({super.key});
@@ -11,39 +12,33 @@ class ProfileInfo extends StatefulWidget {
 
 class _ProfileInfoState extends State<ProfileInfo> {
 
-  String name = 'Ashie Loche';
-  String nickname = ' ';
-  String gender = ' ';
-  String status = ' ';
-  String looking = ' ';
-  String motto = ' ';
-  String bio = 'Tell the others about your self';
+  String username = 'Ash Ketchum';
+  String age = '21';
+  String gender = 'Male';
+  String typePreferences = 'Ghost';
+  String regionPreferences = 'Kalos';
 
   void _navigateToEditProfileScreen() async {
     final updatedProfile = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => EditProfileScreen(
-          initialName: name,
-          initialNickname: nickname,
+          initialUsername: username,
+          initialAge: age,
           initialGender: gender,
-          initialStatus: status,
-          initialLooking: looking,
-          initialBio: bio,
-          initialMotto: motto,
+          initialTypePreferences: typePreferences,
+          initialRegionPreferences: regionPreferences,
         ),
       ),
     );
 
     if (updatedProfile != null) {
       setState(() {
-        name = updatedProfile['name'];
-        nickname = updatedProfile['nickname'];
+        username = updatedProfile['username'];
+        age = updatedProfile['age'];
         gender = updatedProfile['gender'];
-        status = updatedProfile['status'];
-        looking = updatedProfile['looking'];
-        bio = updatedProfile['bio'];
-        motto = updatedProfile['motto'];
+        typePreferences = updatedProfile['typePreferences'];
+        regionPreferences = updatedProfile['regionPreferences'];
         // Update other fields similarly
       });
     }
@@ -84,7 +79,7 @@ class _ProfileInfoState extends State<ProfileInfo> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    name,
+                    username,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -116,32 +111,10 @@ class _ProfileInfoState extends State<ProfileInfo> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                _buildProfileField(label: 'Nickname', value: nickname),
+                _buildProfileField(label: 'Age', value: age),
                 _buildProfileField(label: 'Gender', value: gender),
-                _buildProfileField(label: 'Status', value: status),
-                _buildProfileField(label: 'Looking', value: looking),
-                _buildProfileField(label: 'Motto', value: motto),
-                const ListTile(
-                  title: Text('Bio'),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey), // Add border
-                    borderRadius: BorderRadius.circular(10), // Add border radius for rounded corners
-                  ),
-                  padding: const EdgeInsets.all(10), // Add padding for inner content spacing
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
-                    children: [
-                      Text(
-                        bio, // Bio text here
-                        textAlign: TextAlign.left, // Align text to the left
-                      ),
-                      const SizedBox(height: 30.0), // Add spacing between text and bottom border
-                    ],
-                  ),
-                ),
-                // Add other profile fields here
+                _buildProfileField(label: 'Type Preference/s', value: typePreferences),
+                _buildProfileField(label: 'Region Preference/s', value: regionPreferences),
               ],
             ),
           ),
@@ -162,24 +135,19 @@ Widget _buildProfileField({required String label, required String value}) {
 }
 
 class EditProfileScreen extends StatefulWidget {
-  final String initialName;
-  final String initialNickname;
+  final String initialUsername;
+  final String initialAge;
   final String initialGender;
-  final String initialStatus;
-  final String initialLooking;
-  final String initialBio;
-  final String initialMotto;
+  final String initialTypePreferences;
+  final String initialRegionPreferences;
 
   const EditProfileScreen({
     super.key,
-    required this.initialName,
-    required this.initialNickname,
+    required this.initialUsername,
+    required this.initialAge,
     required this.initialGender,
-    required this.initialStatus,
-    required this.initialLooking,
-    required this.initialBio,
-    required this.initialMotto,
-
+    required this.initialTypePreferences,
+    required this.initialRegionPreferences,
   });
 
   @override
@@ -187,35 +155,35 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class EditProfileScreenState extends State<EditProfileScreen> {
-  late TextEditingController _nameController;
-  late TextEditingController _nicknameController;
-  late TextEditingController _genderController;
-  late TextEditingController _statusController;
-  late TextEditingController _bioController;
-  late TextEditingController _mottoController;
-  late String _lookingValue;
+
+  final _formKey = GlobalKey<FormState>();
+  late TextEditingController _usernameController;
+  late TextEditingController _ageController;
+  late String _gender;
+  late List<String> _typePreferences;
+  late List<String> _regionPreferences;
+
+  final List<String> genders = ['Male', 'Female', 'Non-Binary'];
+  final List<String> types = ['Fire', 'Water', 'Grass', 'Electric', 'Ghost', 'Steel', 'Ground', 'Rock', 'Fairy', 'Dragon', 'Poison', 'Dark', 'Psychic', 'Bug', 'Fighting', 'Normal', 'Flying', 'Ice'];
+  final List<String> regions = ['Kanto', 'Johto', 'Hoenn', 'Sinnoh', 'Unovah', 'Kalos', 'Alola', 'Galar', 'Paldea'];
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.initialName);
-    _nicknameController = TextEditingController(text: widget.initialNickname);
-    _genderController = TextEditingController(text: widget.initialGender);
-    _statusController = TextEditingController(text: widget.initialStatus);
-    _statusController = TextEditingController(text: widget.initialLooking);
-    _bioController = TextEditingController(text: widget.initialBio);
-    _mottoController = TextEditingController(text: widget.initialMotto);
-    _lookingValue = 'Yes';
+    _usernameController = TextEditingController(text: widget.initialUsername);
+    _ageController = TextEditingController(text: widget.initialAge);
+    _gender = widget.initialGender;
+    _typePreferences = widget.initialTypePreferences.split('/');
+    _regionPreferences = widget.initialRegionPreferences.split('/');
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _nicknameController.dispose();
-    _genderController.dispose();
-    _statusController.dispose();
-    _bioController.dispose();
-    _mottoController.dispose();
+    _usernameController.dispose();
+    _ageController.dispose();
+    _gender = '';
+    _typePreferences = [];
+    _regionPreferences = [];
     super.dispose();
   }
 
@@ -236,109 +204,166 @@ class EditProfileScreenState extends State<EditProfileScreen> {
         title: const Text('Edit Profile'),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ElevatedButton(
-              //   onPressed: () => _getImage(ImageSource.gallery),
-              //   child: const Text('Choose from Gallery'),
-              // ),
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
-              ),
-              TextFormField(
-                controller: _nicknameController,
-                decoration: const InputDecoration(labelText: 'Nickname'),
-              ),
-              TextFormField(
-                controller: _genderController,
-                decoration: const InputDecoration(labelText: 'Gender'),
-              ),
-              TextFormField(
-                controller: _statusController,
-                decoration: const InputDecoration(labelText: 'Status'),
-              ),
-              TextFormField(
-                controller: _mottoController,
-                decoration: const InputDecoration(labelText: 'Motto'),
-              ),
-              const SizedBox(height: 10),
-              // Dropdown box for the "Looking" section
-              const Text(
-                  'Looking?',
-                  style: TextStyle(
-                    fontSize: 15,
-                  )
-              ),
-              DropdownButtonFormField<String>(
-                value: _lookingValue,
-                onChanged: (newValue) {
-                  setState(() {
-                    _lookingValue = newValue!;
-                  });
-                },
-                items: <String>['Yes', 'No', 'Maybe'].map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                  'Bio',
-                  style: TextStyle(
-                    fontSize: 15,
-                  )
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey), // Add border
-                  borderRadius: BorderRadius.circular(10), // Add border radius for rounded corners
+        child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ElevatedButton(
+                //   onPressed: () => _getImage(ImageSource.gallery),
+                //   child: const Text('Choose from Gallery'),
+                // ),
+                TextFormField(
+                  controller: _usernameController,
+                  decoration: const InputDecoration(labelText: 'Name'),
+                  validator: (val) {
+                    if (val == null || val.isEmpty) {
+                      return 'Please enter a valid age';
+                    }
+                    return null;
+                  },
                 ),
-                child: TextFormField(
-                  controller: _bioController,
-                  maxLines: null,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter your bio here...',
-                    contentPadding: EdgeInsets.all(10), // Add padding for text input
-                    border: InputBorder.none,
-                  ),
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  controller: _ageController,
+                  decoration: const InputDecoration(labelText: 'Age'),
+                  validator: (val) {
+                    if (val == null || val.isEmpty) {
+                      return 'Please enter a valid age';
+                    }
+                    return null;
+                  },
                 ),
-              ),
-
-              ElevatedButton(
-                onPressed: () {
-                  _updateProfileAndPop();
-                },
-                child: const Text('Save'),
-              ),
-            ],
-          ),
+                const SizedBox(height: 10),
+                // Dropdown box for the "Looking" section
+                const Text(
+                    'Gender',
+                    style: TextStyle(
+                      fontSize: 15,
+                    )
+                ),
+                DropdownButtonFormField<String>(
+                  value: _gender,
+                  onChanged: (val) {
+                    setState(() => _gender = val!);
+                  },
+                  items: genders.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 10),
+                // Dropdown box for the "Looking" section
+                const Text(
+                    'Type Preference/s',
+                    style: TextStyle(
+                      fontSize: 15,
+                    )
+                ),
+                MultiSelectDialogField(
+                    title: const Column(
+                      children: [
+                        Text(
+                          'Types',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                          ),
+                        ),
+                        SizedBox(height: 5),
+                        Divider(),
+                      ],
+                    ),
+                    initialValue: _typePreferences,
+                    items: types.map((e) => MultiSelectItem(e, e)).toList(),
+                    itemsTextStyle: const TextStyle(
+                      color: Colors.white,
+                    ),
+                    selectedItemsTextStyle: const TextStyle(
+                      color: Colors.blue,
+                    ),
+                    selectedColor: Colors.blue,
+                    cancelText: const Text('Cancel', style: TextStyle(color: Colors.white),),
+                    confirmText: const Text('Save', style: TextStyle(color: Colors.white),),
+                    buttonText: const Text('Type/s', style: TextStyle(fontSize: 15),),
+                    onConfirm: (List<String> selected) {
+                      setState(() => _typePreferences = selected);
+                    }
+                ),
+                const SizedBox(height: 10),
+                // Dropdown box for the "Looking" section
+                const Text(
+                    'Region Preference/s',
+                    style: TextStyle(
+                      fontSize: 15,
+                    )
+                ),
+                MultiSelectDialogField(
+                    title: const Column(
+                      children: [
+                        Text(
+                          'Regions',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold
+                          ),
+                        ),
+                        SizedBox(height: 5),
+                        Divider(),
+                      ],
+                    ),
+                    initialValue: _regionPreferences,
+                    items: regions.map((e) => MultiSelectItem(e, e)).toList(),
+                    itemsTextStyle: const TextStyle(
+                      color: Colors.white,
+                    ),
+                    selectedItemsTextStyle: const TextStyle(
+                      color: Colors.blue,
+                    ),
+                    selectedColor: Colors.blue,
+                    cancelText: const Text('Cancel', style: TextStyle(color: Colors.white),),
+                    confirmText: const Text('Save', style: TextStyle(color: Colors.white),),
+                    buttonText: const Text('Region/s', style: TextStyle(fontSize: 15),),
+                    onConfirm: (List<String> selected) {
+                      setState(() => _regionPreferences = selected);
+                    }
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        // Perform sign-up functionality here
+                        if (_formKey.currentState!.validate()) {
+                          _updateProfileAndPop();
+                        }
+                      },
+                      child: const Text('Save'),
+                    ),
+                  ],
+                )
+              ],
+            )
         ),
       ),
     );
   }
 
   void _updateProfileAndPop() {
-    final newName = _nameController.text;
-    final newNickname = _nicknameController.text;
-    final newGender = _genderController.text;
-    final newStatus = _statusController.text;
-    final newLooking = _lookingValue.toString();
-    final newBio = _bioController.text;
-    final newMotto = _mottoController.text;
+    final newUsername = _usernameController.text.trim();
+    final newAge = _ageController.text.trim();
+    final newGender = _gender.toString().trim();
+    final newTypePreferences = _typePreferences.join('/').toString();
+    final newRegionPreferences = _regionPreferences.join('/').toString();
     Navigator.pop(context, {
-      'name': newName,
-      'nickname': newNickname,
+      'username': newUsername,
+      'age': newAge,
       'gender': newGender,
-      'status': newStatus,
-      'looking': newLooking,
-      'bio': newBio,
-      'motto': newMotto,
+      'typePreferences': newTypePreferences,
+      'regionPreferences': newRegionPreferences,
     });
   }
 }
