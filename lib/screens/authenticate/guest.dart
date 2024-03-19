@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
 import '../../services/auth.dart';
 import '../../shared/loading.dart';
+// import '../main/profileData.dart';
 
 class Guest extends StatefulWidget {
   const Guest({super.key});
@@ -16,6 +19,15 @@ class _GuestState extends State<Guest> {
   final loginEmailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _ageController = TextEditingController();
+  late String _gender = '';
+  late List<String> _typePreferences = [];
+  late List<String> _regionPreferences = [];
+
+  final List<String> genders = ['Male', 'Female', 'Non-Binary'];
+  final List<String> types = ['Fire', 'Water', 'Grass', 'Electric', 'Ghost', 'Steel', 'Ground', 'Rock', 'Fairy', 'Dragon', 'Poison', 'Dark', 'Psychic', 'Bug', 'Fighting', 'Normal', 'Flying', 'Ice'];
+  final List<String> regions = ['Kanto', 'Johto', 'Hoenn', 'Sinnoh', 'Unovah', 'Kalos', 'Alola', 'Galar', 'Paldea'];
 
   // Text Field State
   String email = '', password = '', confirmPassword = '', loginError = '', signUpError = '';
@@ -286,6 +298,210 @@ class _GuestState extends State<Guest> {
 
   }
 
+  void newRegisterForm() {
+
+    final newRegisterFormKey = GlobalKey<FormState>();
+
+    passwordController.text = '';
+    confirmPasswordController.text = '';
+    setState(() {
+      email = '';
+      password = '';
+      confirmPassword = '';
+      signUpError = (signUpReload) ? signUpError : '';
+      signUpReload = false;
+    });
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const SingleChildScrollView(
+            child: Column(
+              children: [
+                Text("Sign Up"),
+                Divider(),
+              ],
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: Form(
+                key: newRegisterFormKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      controller: _usernameController,
+                      decoration: const InputDecoration(labelText: 'Name'),
+                      validator: (val) {
+                        if (val == null || val.isEmpty) {
+                          return 'Please enter a valid age';
+                        }
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      keyboardType: TextInputType.number,
+                      controller: _ageController,
+                      decoration: const InputDecoration(labelText: 'Age'),
+                      validator: (val) {
+                        if (val == null || val.isEmpty) {
+                          return 'Please enter a valid age';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    // Dropdown box for the "Looking" section
+                    const Text(
+                        'Gender',
+                        style: TextStyle(
+                          fontSize: 15,
+                        )
+                    ),
+                    DropdownButtonFormField<String>(
+                      value: _gender,
+                      onChanged: (val) {
+                        setState(() => _gender = val!);
+                      },
+                      items: genders.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 10),
+                    // Dropdown box for the "Looking" section
+                    const Text(
+                        'Type Preference/s',
+                        style: TextStyle(
+                          fontSize: 15,
+                        )
+                    ),
+                    MultiSelectDialogField(
+                        title: const Column(
+                          children: [
+                            Text(
+                              'Types',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            Divider(),
+                          ],
+                        ),
+                        initialValue: _typePreferences,
+                        items: types.map((e) => MultiSelectItem(e, e)).toList(),
+                        itemsTextStyle: const TextStyle(
+                          color: Colors.white,
+                        ),
+                        selectedItemsTextStyle: const TextStyle(
+                          color: Colors.blue,
+                        ),
+                        selectedColor: Colors.blue,
+                        cancelText: const Text('Cancel', style: TextStyle(color: Colors.white),),
+                        confirmText: const Text('Save', style: TextStyle(color: Colors.white),),
+                        buttonText: const Text('Type/s', style: TextStyle(fontSize: 15),),
+                        onConfirm: (List<String> selected) {
+                          setState(() => _typePreferences = selected);
+                        }
+                    ),
+                    const SizedBox(height: 10),
+                    // Dropdown box for the "Looking" section
+                    const Text(
+                        'Region Preference/s',
+                        style: TextStyle(
+                          fontSize: 15,
+                        )
+                    ),
+                    MultiSelectDialogField(
+                        title: const Column(
+                          children: [
+                            Text(
+                              'Regions',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            Divider(),
+                          ],
+                        ),
+                        initialValue: _regionPreferences,
+                        items: regions.map((e) => MultiSelectItem(e, e)).toList(),
+                        itemsTextStyle: const TextStyle(
+                          color: Colors.white,
+                        ),
+                        selectedItemsTextStyle: const TextStyle(
+                          color: Colors.blue,
+                        ),
+                        selectedColor: Colors.blue,
+                        cancelText: const Text('Cancel', style: TextStyle(color: Colors.white),),
+                        confirmText: const Text('Save', style: TextStyle(color: Colors.white),),
+                        buttonText: const Text('Region/s', style: TextStyle(fontSize: 15),),
+                        onConfirm: (List<String> selected) {
+                          setState(() => _regionPreferences = selected);
+                        }
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            // Perform sign-up functionality here
+                            if (newRegisterFormKey.currentState!.validate()) {
+                              // _updateProfileAndPop();
+                            }
+                          },
+                          child: const Text('Save'),
+                        ),
+                      ],
+                    )
+                  ],
+                )
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'), // Close button
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                // Perform sign-up functionality here
+                if (newRegisterFormKey.currentState!.validate()) {
+
+                  Navigator.of(context).pop();
+                  setState(() => loading = true);
+
+                  dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+
+                  if (result == "[firebase_auth/email-already-in-use] The email address is already in use by another account." || result == "[firebase_auth/invalid-email] The email address is badly formatted.") {
+                    setState(() {
+                      signUpError = result == "[firebase_auth/email-already-in-use] The email address is already in use by another account." ? 'Email is already in use' : 'Invalid Email';
+                      signUpReload = true;
+                      loading = false;
+                    });
+                    signUpForm();
+                  }
+
+                }
+              },
+              child: const Text('Sign Up', style: TextStyle(color: Colors.orange)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     loginEmailController.dispose();
@@ -348,21 +564,28 @@ class _GuestState extends State<Guest> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
 
                         logInForm();
 
                         // dynamic result = await _auth.signInAnon();
                         //
                         // if (result == null) {
-                        //   if (kDebugMode) {
-                        //     print('Error signing in');
-                        //   }
+                        //   print('Error signing in');
                         // } else {
                         //   // Add your login functionality here
                         //   Navigator.push(
                         //     context,
-                        //     MaterialPageRoute(builder: (context) => const PokeDopt()),
+                        //     MaterialPageRoute(
+                        //       builder: (context) => const EditProfileScreen(
+                        //         initialUsername: '',
+                        //         initialAge: '',
+                        //         initialGender: 'Male',
+                        //         initialTypePreferences: '',
+                        //         initialRegionPreferences: '',
+                        //         newRegister: true,
+                        //       ),
+                        //     ),
                         //   );
                         // }
                       },

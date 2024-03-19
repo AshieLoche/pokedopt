@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pokedopt/models/pokemon.dart';
 import 'dart:io';
 import 'package:pokedopt/models/user.dart';
 
@@ -12,6 +13,7 @@ class DatabaseService {
 
   // Collection Reference
   final CollectionReference userCollection = FirebaseFirestore.instance.collection('users');
+  final CollectionReference pokemonCollection = FirebaseFirestore.instance.collection('pokemons');
 
   Future updateUserData(String pfpUrl, String username, String age, String gender, String typePreference, String regionPreference) async {
     // String pfpUrl = await uploadPfpImage(imageFile);
@@ -60,6 +62,27 @@ class DatabaseService {
         typePreference: snap['typePreference'],
         regionPreference: snap['regionPreference']
     );
+  }
+
+  // Pokemon List from snapshot
+  List<Pokemon> _pokemonListFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      return Pokemon(
+          name: data['name'] ?? '',
+          species: data['species'] ?? '',
+          imageURL: data['imageURL'] ?? '',
+          description: data['description'] ?? '',
+          types: data['type/s'] ?? '',
+          region: data['region'] ?? '',
+      );
+    }).toList();
+  }
+
+  // Get Pokemons Stream
+  Stream<List<Pokemon>> get pokemons {
+    return pokemonCollection.snapshots()
+    .map(_pokemonListFromSnapshot);
   }
 
   // // Profile Model from Snapshot

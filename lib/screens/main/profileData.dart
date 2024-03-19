@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:pokedopt/models/user.dart';
+import 'package:pokedopt/services/database.dart';
 import 'package:provider/provider.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
@@ -12,11 +14,11 @@ class ProfileInfo extends StatefulWidget {
 
 class _ProfileInfoState extends State<ProfileInfo> {
 
-  String username = 'Ash Ketchum';
-  String age = '21';
+  String username = '';
+  String age = '';
   String gender = 'Male';
-  String typePreferences = 'Ghost';
-  String regionPreferences = 'Kalos';
+  String typePreferences = '';
+  String regionPreferences = '';
 
   void _navigateToEditProfileScreen() async {
     final updatedProfile = await Navigator.push(
@@ -199,155 +201,312 @@ class EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User?>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profile'),
       ),
       body: SingleChildScrollView(
-        child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // ElevatedButton(
-                //   onPressed: () => _getImage(ImageSource.gallery),
-                //   child: const Text('Choose from Gallery'),
-                // ),
-                TextFormField(
-                  controller: _usernameController,
-                  decoration: const InputDecoration(labelText: 'Name'),
-                  validator: (val) {
-                    if (val == null || val.isEmpty) {
-                      return 'Please enter a valid age';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  controller: _ageController,
-                  decoration: const InputDecoration(labelText: 'Age'),
-                  validator: (val) {
-                    if (val == null || val.isEmpty) {
-                      return 'Please enter a valid age';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 10),
-                // Dropdown box for the "Looking" section
-                const Text(
-                    'Gender',
-                    style: TextStyle(
-                      fontSize: 15,
-                    )
-                ),
-                DropdownButtonFormField<String>(
-                  value: _gender,
-                  onChanged: (val) {
-                    setState(() => _gender = val!);
-                  },
-                  items: genders.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 10),
-                // Dropdown box for the "Looking" section
-                const Text(
-                    'Type Preference/s',
-                    style: TextStyle(
-                      fontSize: 15,
-                    )
-                ),
-                MultiSelectDialogField(
-                    title: const Column(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: StreamBuilder<UserData>(
+            stream: DatabaseService(uid: user!.uid).userData,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                UserData? userData = snapshot.data;
+                return Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Types',
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
-                          ),
+                        // ElevatedButton(
+                        //   onPressed: () => _getImage(ImageSource.gallery),
+                        //   child: const Text('Choose from Gallery'),
+                        // ),
+                        TextFormField(
+                          controller: _usernameController,
+                          decoration: const InputDecoration(labelText: 'Name'),
+                          validator: (val) {
+                            if (val == null || val.isEmpty) {
+                              return 'Please enter a valid age';
+                            }
+                            return null;
+                          },
                         ),
-                        SizedBox(height: 5),
-                        Divider(),
+                        TextFormField(
+                          keyboardType: TextInputType.number,
+                          controller: _ageController,
+                          decoration: const InputDecoration(labelText: 'Age'),
+                          validator: (val) {
+                            if (val == null || val.isEmpty) {
+                              return 'Please enter a valid age';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        // Dropdown box for the "Looking" section
+                        const Text(
+                            'Gender',
+                            style: TextStyle(
+                              fontSize: 15,
+                            )
+                        ),
+                        DropdownButtonFormField<String>(
+                          value: _gender ?? userData!.gender,
+                          onChanged: (val) {
+                            setState(() => _gender = val!);
+                          },
+                          items: genders.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                        const SizedBox(height: 10),
+                        // Dropdown box for the "Looking" section
+                        const Text(
+                            'Type Preference/s',
+                            style: TextStyle(
+                              fontSize: 15,
+                            )
+                        ),
+                        MultiSelectDialogField(
+                            title: const Column(
+                              children: [
+                                Text(
+                                  'Types',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                Divider(),
+                              ],
+                            ),
+                            initialValue: _typePreferences,
+                            items: types.map((e) => MultiSelectItem(e, e)).toList(),
+                            itemsTextStyle: const TextStyle(
+                              color: Colors.white,
+                            ),
+                            selectedItemsTextStyle: const TextStyle(
+                              color: Colors.blue,
+                            ),
+                            selectedColor: Colors.blue,
+                            cancelText: const Text('Cancel', style: TextStyle(color: Colors.white),),
+                            confirmText: const Text('Save', style: TextStyle(color: Colors.white),),
+                            buttonText: const Text('Type/s', style: TextStyle(fontSize: 15),),
+                            onConfirm: (List<String> selected) {
+                              setState(() => _typePreferences = selected);
+                            }
+                        ),
+                        const SizedBox(height: 10),
+                        // Dropdown box for the "Looking" section
+                        const Text(
+                            'Region Preference/s',
+                            style: TextStyle(
+                              fontSize: 15,
+                            )
+                        ),
+                        MultiSelectDialogField(
+                            title: const Column(
+                              children: [
+                                Text(
+                                  'Regions',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                Divider(),
+                              ],
+                            ),
+                            initialValue: _regionPreferences,
+                            items: regions.map((e) => MultiSelectItem(e, e)).toList(),
+                            itemsTextStyle: const TextStyle(
+                              color: Colors.white,
+                            ),
+                            selectedItemsTextStyle: const TextStyle(
+                              color: Colors.blue,
+                            ),
+                            selectedColor: Colors.blue,
+                            cancelText: const Text('Cancel', style: TextStyle(color: Colors.white),),
+                            confirmText: const Text('Save', style: TextStyle(color: Colors.white),),
+                            buttonText: const Text('Region/s', style: TextStyle(fontSize: 15),),
+                            onConfirm: (List<String> selected) {
+                              setState(() => _regionPreferences = selected);
+                            }
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                // Perform sign-up functionality here
+                                if (_formKey.currentState!.validate()) {
+                                  _updateProfileAndPop();
+                                }
+                              },
+                              child: const Text('Save'),
+                            ),
+                          ],
+                        )
                       ],
-                    ),
-                    initialValue: _typePreferences,
-                    items: types.map((e) => MultiSelectItem(e, e)).toList(),
-                    itemsTextStyle: const TextStyle(
-                      color: Colors.white,
-                    ),
-                    selectedItemsTextStyle: const TextStyle(
-                      color: Colors.blue,
-                    ),
-                    selectedColor: Colors.blue,
-                    cancelText: const Text('Cancel', style: TextStyle(color: Colors.white),),
-                    confirmText: const Text('Save', style: TextStyle(color: Colors.white),),
-                    buttonText: const Text('Type/s', style: TextStyle(fontSize: 15),),
-                    onConfirm: (List<String> selected) {
-                      setState(() => _typePreferences = selected);
-                    }
-                ),
-                const SizedBox(height: 10),
-                // Dropdown box for the "Looking" section
-                const Text(
-                    'Region Preference/s',
-                    style: TextStyle(
-                      fontSize: 15,
                     )
-                ),
-                MultiSelectDialogField(
-                    title: const Column(
+                );
+              } else {
+                return Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Regions',
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold
-                          ),
+                        // ElevatedButton(
+                        //   onPressed: () => _getImage(ImageSource.gallery),
+                        //   child: const Text('Choose from Gallery'),
+                        // ),
+                        TextFormField(
+                          controller: _usernameController,
+                          decoration: const InputDecoration(labelText: 'OwO'),
+                          validator: (val) {
+                            if (val == null || val.isEmpty) {
+                              return 'Please enter a valid age';
+                            }
+                            return null;
+                          },
                         ),
-                        SizedBox(height: 5),
-                        Divider(),
+                        TextFormField(
+                          keyboardType: TextInputType.number,
+                          controller: _ageController,
+                          decoration: const InputDecoration(labelText: 'Age'),
+                          validator: (val) {
+                            if (val == null || val.isEmpty) {
+                              return 'Please enter a valid age';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        // Dropdown box for the "Looking" section
+                        const Text(
+                            'Gender',
+                            style: TextStyle(
+                              fontSize: 15,
+                            )
+                        ),
+                        DropdownButtonFormField<String>(
+                          value: _gender ?? 'Female',
+                          onChanged: (val) {
+                            setState(() => _gender = val!);
+                          },
+                          items: genders.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                        const SizedBox(height: 10),
+                        // Dropdown box for the "Looking" section
+                        const Text(
+                            'Type Preference/s',
+                            style: TextStyle(
+                              fontSize: 15,
+                            )
+                        ),
+                        MultiSelectDialogField(
+                            title: const Column(
+                              children: [
+                                Text(
+                                  'Types',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                Divider(),
+                              ],
+                            ),
+                            initialValue: _typePreferences,
+                            items: types.map((e) => MultiSelectItem(e, e)).toList(),
+                            itemsTextStyle: const TextStyle(
+                              color: Colors.white,
+                            ),
+                            selectedItemsTextStyle: const TextStyle(
+                              color: Colors.blue,
+                            ),
+                            selectedColor: Colors.blue,
+                            cancelText: const Text('Cancel', style: TextStyle(color: Colors.white),),
+                            confirmText: const Text('Save', style: TextStyle(color: Colors.white),),
+                            buttonText: const Text('Type/s', style: TextStyle(fontSize: 15),),
+                            onConfirm: (List<String> selected) {
+                              setState(() => _typePreferences = selected);
+                            }
+                        ),
+                        const SizedBox(height: 10),
+                        // Dropdown box for the "Looking" section
+                        const Text(
+                            'Region Preference/s',
+                            style: TextStyle(
+                              fontSize: 15,
+                            )
+                        ),
+                        MultiSelectDialogField(
+                            title: const Column(
+                              children: [
+                                Text(
+                                  'Regions',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                Divider(),
+                              ],
+                            ),
+                            initialValue: _regionPreferences,
+                            items: regions.map((e) => MultiSelectItem(e, e)).toList(),
+                            itemsTextStyle: const TextStyle(
+                              color: Colors.white,
+                            ),
+                            selectedItemsTextStyle: const TextStyle(
+                              color: Colors.blue,
+                            ),
+                            selectedColor: Colors.blue,
+                            cancelText: const Text('Cancel', style: TextStyle(color: Colors.white),),
+                            confirmText: const Text('Save', style: TextStyle(color: Colors.white),),
+                            buttonText: const Text('Region/s', style: TextStyle(fontSize: 15),),
+                            onConfirm: (List<String> selected) {
+                              setState(() => _regionPreferences = selected);
+                            }
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                // Perform sign-up functionality here
+                                if (_formKey.currentState!.validate()) {
+                                  _updateProfileAndPop();
+                                }
+                              },
+                              child: const Text('Save'),
+                            ),
+                          ],
+                        )
                       ],
-                    ),
-                    initialValue: _regionPreferences,
-                    items: regions.map((e) => MultiSelectItem(e, e)).toList(),
-                    itemsTextStyle: const TextStyle(
-                      color: Colors.white,
-                    ),
-                    selectedItemsTextStyle: const TextStyle(
-                      color: Colors.blue,
-                    ),
-                    selectedColor: Colors.blue,
-                    cancelText: const Text('Cancel', style: TextStyle(color: Colors.white),),
-                    confirmText: const Text('Save', style: TextStyle(color: Colors.white),),
-                    buttonText: const Text('Region/s', style: TextStyle(fontSize: 15),),
-                    onConfirm: (List<String> selected) {
-                      setState(() => _regionPreferences = selected);
-                    }
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        // Perform sign-up functionality here
-                        if (_formKey.currentState!.validate()) {
-                          _updateProfileAndPop();
-                        }
-                      },
-                      child: const Text('Save'),
-                    ),
-                  ],
-                )
-              ],
-            )
-        ),
+                    )
+                );
+              }
+            },
+          ),
+        )
       ),
     );
   }
