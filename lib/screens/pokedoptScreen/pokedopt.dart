@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:pokedopt/screens/main/pokelist.dart';
+import 'package:pokedopt/screens/pokelistScreen/pokelist.dart';
 import 'package:pokedopt/screens/pokedoptScreen/pokemonCard.dart';
-import 'package:pokedopt/screens/main/profileData.dart';
+import 'package:pokedopt/screens/profileScreen/profileData.dart';
 import 'package:pokedopt/services/database.dart';
 import 'package:provider/provider.dart';
 

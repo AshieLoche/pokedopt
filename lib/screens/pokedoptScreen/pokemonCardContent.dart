@@ -1,5 +1,7 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:pokedopt/services/database.dart';
+import 'package:pokedopt/shared/loading.dart';
 import '../../models/pokemon.dart';
 
 class PokemonCardContent extends StatelessWidget {
@@ -12,27 +14,9 @@ class PokemonCardContent extends StatelessWidget {
     required this.pokemon,
   });
 
-  Future<String> getImageURL(String imagePath) async {
-
-    final storage = FirebaseStorage.instanceFor(bucket: 'gs://pokedopt-c3b3f.appspot.com');
-
-    final imageRef = storage.ref().child(imagePath);
-
-    try {
-      final url = await imageRef.getDownloadURL();
-      return url;
-    } catch (error) {
-      print('Error retrieving image URL: $error');
-      // Handle error (e.g., display an error message to the user)
-      return ''; // Or a placeholder URL
-    }
-  }
-
-
-
   @override
   Widget build(BuildContext context) {
-    Future<String> imageUrl = getImageURL(pokemon.imageURL);
+    Future<String> imageUrl = DatabaseService().getImageURL(pokemon.imageURL);
 
     return SizedBox(
       width: MediaQuery.of(context).size.width * 1,
@@ -63,7 +47,7 @@ class PokemonCardContent extends StatelessWidget {
                         return Text('Error: ${snapshot.error}');
                       }
                       // Display a progress indicator or placeholder while loading
-                      return const CircularProgressIndicator();
+                      return const Loading();
                     },
                   ),
                 ),
