@@ -98,7 +98,7 @@ class PokeDoptState extends State<PokeDopt> {
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 1),
             const Expanded(
               child: PokemonCard(),
             ),

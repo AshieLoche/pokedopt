@@ -49,36 +49,37 @@ class PokemonCardContent extends StatelessWidget {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         return Container(
-                            width: 250,
-                            height: 250,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(snapshot.data!),
-                              ),
+                          width: 380,
+                          height: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(snapshot.data!),
                             ),
-                          );
+                          ),
+                        );
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       }
-                      // Display a progress indicator or placeholder while loading
                       return const CircularProgressIndicator();
                     },
                   ),
                 ),
-                ListTile(
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(pokemon.name, style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 15,),
-                      Text(pokemon.description),
-                      const SizedBox(height: 20,),
-                      Text('Species: ${pokemon.species}', style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
-                      Text('Region: ${pokemon.region}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                      Text('Type: ${pokemon.types}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                    ],
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(pokemon.name, style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 10,),
+                        Text(pokemon.description, style: const TextStyle(fontSize: 15),),
+                        const SizedBox(height: 20,),
+                        Text('Species: ${pokemon.species}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                        Text('Region: ${pokemon.region}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                        Text('Type: ${pokemon.types}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
                   ),
                 ),
               ],
