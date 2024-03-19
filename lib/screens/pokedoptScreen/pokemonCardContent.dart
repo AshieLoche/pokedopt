@@ -110,8 +110,6 @@ class PokemonCardContent extends StatelessWidget {
           ],
         ),
       ),
-
     );
-
   }
 }

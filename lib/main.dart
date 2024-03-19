@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
           '/Profile': (context) => const Profile(), // Route for the profile page
           // '/PokeList': (context) => const PokeList(likedPokemons: [],), // Route for the cart page(PokeList)
           '/PokeDopt': (context) => const PokeDopt(likedPokemons: [],), // Route for the PokeDopt page
+          '/PokeList': (context) => const PokeList(),
         },
       ),
     );

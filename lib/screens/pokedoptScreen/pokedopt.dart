@@ -25,7 +25,7 @@ class PokeDopt extends StatefulWidget {
 
 class PokeDoptState extends State<PokeDopt> {
 
-  List<Pokemon> likedPokemons = [];
+  //List<Pokemon> likedPokemons = [];
 
   // final List<Pokemon> pokemons = [
   //   Pokemon(personalName: 'My Pokemon 1',name: 'Gengar', imageUrl: 'assets/pokemon/gengar.jpg',description: 'To steal the life of its target, it slips into the prey’s shadow and silently waits for an opportunity.', type: 'Ghost/Poison'),
@@ -113,12 +113,7 @@ class PokeDoptState extends State<PokeDopt> {
                 Navigator.pushNamed(context, '/PokeHome');
                 break;
               case 2:
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => PokeList(likedPokemons: likedPokemons),
-                //   ),
-                // );
+                Navigator.pushNamed(context, '/PokeList');
                 break;
             }
           },
