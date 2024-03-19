@@ -1,19 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:pokedopt/models/pokemon.dart';
+import 'package:pokedopt/screens/pokedoptScreen/pokemonCard.dart';
+import 'package:pokedopt/screens/pokedoptScreen/pokemonCardContent.dart';
 
-class PokeList extends StatelessWidget {
+class PokeList extends StatefulWidget {
+  final List<Pokemon> likedPokemonList;
 
-
-  const PokeList({Key? key});
+  const PokeList({Key? key, required this.likedPokemonList}) : super(key: key);
 
   @override
+  PokeListState createState() => PokeListState();
+}
+
+class PokeListState extends State<PokeList> {
+  @override
   Widget build(BuildContext context) {
+    print('Liked Pokémon List: ${widget.likedPokemonList}');
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PokeList Pages'),
+        title: const Text('Liked Pokémon'),
         centerTitle: true,
-        automaticallyImplyLeading: false,
       ),
-
+      body: ListView.builder(
+        itemCount: widget.likedPokemonList.length,
+        itemBuilder: (context, index) {
+          final pokemon = widget.likedPokemonList[index];
+          return Card(
+            child: ListTile(
+              leading: Image.network(pokemon.imageURL), // Image on the left
+              title: Text(pokemon.name), // Name on the right
+              onTap: () {
+                // Add your onTap logic here
+              },
+            ),
+          );
+        },
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -22,12 +44,16 @@ class PokeList extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: ImageIcon(
-                AssetImage('assets/pokedopt.ico'), color: Colors.orange),
+              AssetImage('assets/pokedopt.ico'),
+              color: Colors.orange,
+            ),
             label: 'PokeDopt',
           ),
           BottomNavigationBarItem(
             icon: ImageIcon(
-                AssetImage('assets/pokepals.ico'), color: Colors.orange),
+              AssetImage('assets/pokepals.ico'),
+              color: Colors.orange,
+            ),
             label: 'PokeList',
           ),
         ],

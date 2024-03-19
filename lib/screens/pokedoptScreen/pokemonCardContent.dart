@@ -1,39 +1,58 @@
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../../models/pokemon.dart';
 
-class PokemonCardContent extends StatelessWidget {
-
-  final bool isLiked = false;
+class PokemonCardContent extends StatefulWidget {
   final Pokemon pokemon;
+  final List<Pokemon> likedPokemonList;
+  final Function(Pokemon) onLiked; // Callback function
 
   const PokemonCardContent({
     super.key,
     required this.pokemon,
+    required this.likedPokemonList, required this.onLiked,
   });
 
+  @override
+  PokemonCardContentState createState() => PokemonCardContentState();
+}
+
+class PokemonCardContentState extends State<PokemonCardContent> {
+  late Future<String> _imageUrl;
+  bool _isFavorited = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _imageUrl = getImageURL(widget.pokemon.imageURL);
+  }
+
   Future<String> getImageURL(String imagePath) async {
-
-    final storage = FirebaseStorage.instanceFor(bucket: 'gs://pokedopt-c3b3f.appspot.com');
-
+    final storage = FirebaseStorage.instanceFor(
+        bucket: 'gs://pokedopt-c3b3f.appspot.com');
     final imageRef = storage.ref().child(imagePath);
-
     try {
       final url = await imageRef.getDownloadURL();
       return url;
     } catch (error) {
-      print('Error retrieving image URL: $error');
       // Handle error (e.g., display an error message to the user)
       return ''; // Or a placeholder URL
     }
   }
 
-
+  void _toggleFavorite() {
+    setState(() {
+      _isFavorited = !_isFavorited;
+      if (_isFavorited) {
+        widget.onLiked(widget.pokemon); // Call the callback function
+      } else {
+        widget.likedPokemonList.remove(widget.pokemon);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    Future<String> imageUrl = getImageURL(pokemon.imageURL);
-
     return SizedBox(
       width: MediaQuery.of(context).size.width * 1,
       child: Card(
@@ -45,7 +64,7 @@ class PokemonCardContent extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 7.0),
                   child: FutureBuilder<String>(
-                    future: imageUrl,
+                    future: _imageUrl,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         return Container(
@@ -71,13 +90,26 @@ class PokemonCardContent extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(pokemon.name, style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 10,),
-                        Text(pokemon.description, style: const TextStyle(fontSize: 15),),
-                        const SizedBox(height: 20,),
-                        Text('Species: ${pokemon.species}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                        Text('Region: ${pokemon.region}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                        Text('Type: ${pokemon.types}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                        Text(widget.pokemon.name,
+                            style: const TextStyle(
+                                fontSize: 25, fontWeight: FontWeight.bold)),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(widget.pokemon.description,
+                            style: const TextStyle(fontSize: 15)),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Text('Species: ${widget.pokemon.species}',
+                            style: const TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.bold)),
+                        Text('Region: ${widget.pokemon.region}',
+                            style: const TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.bold)),
+                        Text('Type: ${widget.pokemon.types}',
+                            style: const TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
@@ -93,16 +125,14 @@ class PokemonCardContent extends StatelessWidget {
                 children: [
                   IconButton(
                     icon: Icon(
-                      isLiked ? Icons.favorite : Icons.favorite_border,
-                      color: isLiked ? Colors.red : Colors.grey,
+                      _isFavorited
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: _isFavorited ? Colors.red : null,
                     ),
                     iconSize: 50,
-                    onPressed: () {
-                      // setState(() {
-                      //   isLiked = !isLiked;
-                      //   widget.onLiked(widget.pokemon); // Pass the entire Pokemon object
-                      // });
-                    },
+                    onPressed: _toggleFavorite,
+
                   ),
                 ],
               ),
@@ -113,3 +143,4 @@ class PokemonCardContent extends StatelessWidget {
     );
   }
 }
+

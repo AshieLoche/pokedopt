@@ -8,24 +8,20 @@ import '../../models/pokemon.dart';
 import '../../services/database.dart';
 
 class PokemonCard extends StatefulWidget {
-  const PokemonCard({super.key});
-
-  // final Pokemon pokemon;
-  // final Function(Pokemon) onLiked;
-  // final String description;
-  //
-  // const PokemonCard({
-  //   super.key,
-  //   required this.pokemon,
-  //   required this.onLiked,
-  //   required this.description,
-  // });
+  const PokemonCard({Key? key}) : super(key: key);
 
   @override
   PokemonCardState createState() => PokemonCardState();
 }
 
 class PokemonCardState extends State<PokemonCard> {
+  List<Pokemon> likedPokemonList = [];
+
+  void addLikedPokemon(Pokemon pokemon) {
+    setState(() {
+      likedPokemonList.add(pokemon);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +31,11 @@ class PokemonCardState extends State<PokemonCard> {
       scrollDirection: Axis.horizontal,
       itemCount: pokemons.length,
       itemBuilder: (context, index) {
-        return PokemonCardContent(pokemon: pokemons[index]);
+        return PokemonCardContent(
+          pokemon: pokemons[index],
+          likedPokemonList: likedPokemonList,
+          onLiked: addLikedPokemon, // Pass the callback function
+        );
       },
     );
   }

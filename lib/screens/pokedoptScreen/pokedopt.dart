@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pokedopt/screens/main/pokelist.dart';
 import 'package:pokedopt/screens/pokedoptScreen/pokemonCard.dart';
 import 'package:pokedopt/screens/main/profileData.dart';
+import 'package:pokedopt/screens/pokedoptScreen/pokemonCardContent.dart';
 import 'package:pokedopt/services/database.dart';
 import 'package:provider/provider.dart';
 
