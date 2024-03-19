@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:pokedopt/screens/pokedoptScreen/pokemonCardContent.dart';
 import 'package:pokedopt/screens/pokelistScreen/pokelist.dart';
 import 'package:pokedopt/screens/pokedoptScreen/pokemonCard.dart';
 import 'package:pokedopt/screens/profileScreen/profileData.dart';
@@ -34,20 +35,7 @@ class PokeDoptState extends State<PokeDopt> {
   //   // Add more Pokemon data here
   // ];
   //
-  // // Function to update likedPokemons list
-  // void updateLikedPokemons(Pokemon pokemons) {
-  //   setState(() {
-  //     if (!likedPokemons.contains(pokemons)) {
-  //       likedPokemons.add(pokemons);
-  //     }
-  //   }); // Pass likedPokemons list to PokeList when navigating
-  //   Navigator.pushReplacement(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => PokeList(likedPokemons: likedPokemons),
-  //     ),
-  //   );
-  // }
+  // Function to update likedPokemons list
 
   @override
   Widget build(BuildContext context) {
@@ -128,12 +116,12 @@ class PokeDoptState extends State<PokeDopt> {
                 Navigator.pushNamed(context, '/PokeHome');
                 break;
               case 2:
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => PokeList(likedPokemons: likedPokemons),
-                //   ),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PokeList(likedPokemonList: likedPokemons),
+                  ),
+                );
                 break;
             }
           },

@@ -9,13 +9,23 @@ class PokeList extends StatefulWidget {
   const PokeList({Key? key, required this.likedPokemonList}) : super(key: key);
 
   @override
-  PokeListState createState() => PokeListState();
+  _PokeListState createState() => _PokeListState();
 }
 
-class PokeListState extends State<PokeList> {
+class _PokeListState extends State<PokeList> {
+  void _onLiked(Pokemon pokemon, bool isLiked) {
+    setState(() {
+      pokemon.isLiked = isLiked;
+      if (isLiked) {
+        widget.likedPokemonList.add(pokemon);
+      } else {
+        widget.likedPokemonList.remove(pokemon);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    print('Liked Pokémon List: ${widget.likedPokemonList}');
     return Scaffold(
       appBar: AppBar(
         title: const Text('Liked Pokémon'),
@@ -27,8 +37,17 @@ class PokeListState extends State<PokeList> {
           final pokemon = widget.likedPokemonList[index];
           return Card(
             child: ListTile(
-              leading: Image.network(pokemon.imageURL), // Image on the left
-              title: Text(pokemon.name), // Name on the right
+              leading: Image.network(pokemon.imageURL),
+              title: Text(pokemon.name),
+              trailing: IconButton(
+                icon: Icon(
+                  pokemon.isLiked ? Icons.favorite : Icons.favorite_border,
+                  color: pokemon.isLiked ? Colors.red : null,
+                ),
+                onPressed: () {
+                  _onLiked(pokemon, !pokemon.isLiked); // Toggle liked status
+                },
+              ),
               onTap: () {
                 // Add your onTap logic here
               },
@@ -74,3 +93,4 @@ class PokeListState extends State<PokeList> {
     );
   }
 }
+

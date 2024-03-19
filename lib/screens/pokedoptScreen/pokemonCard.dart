@@ -17,11 +17,16 @@ class PokemonCard extends StatefulWidget {
 class PokemonCardState extends State<PokemonCard> {
   List<Pokemon> likedPokemonList = [];
 
-  void addLikedPokemon(Pokemon pokemon) {
+  void addLikedPokemon(Pokemon pokemon, bool isLiked) {
     setState(() {
-      likedPokemonList.add(pokemon);
+      if (isLiked) {
+        likedPokemonList.add(pokemon);
+      } else {
+        likedPokemonList.remove(pokemon);
+      }
     });
   }
+
 
   @override
   Widget build(BuildContext context) {

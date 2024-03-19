@@ -5,6 +5,7 @@ class Pokemon {
   final String description;
   final String types;
   final String region;
+  bool isLiked;
 
   Pokemon({
     required this.name,
@@ -13,5 +14,6 @@ class Pokemon {
     required this.description,
     required this.types,
     required this.region,
+    this.isLiked = false,
   });
 }

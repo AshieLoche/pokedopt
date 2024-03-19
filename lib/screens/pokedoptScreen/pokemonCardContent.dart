@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:pokedopt/screens/pokelistScreen/pokelist.dart';
 import '../../models/pokemon.dart';
 
 class PokemonCardContent extends StatefulWidget {
   final Pokemon pokemon;
   final List<Pokemon> likedPokemonList;
-  final Function(Pokemon) onLiked; // Callback function
+  final Function(Pokemon, bool) onLiked; // Callback function
 
   const PokemonCardContent({
-    super.key,
+    Key? key,
     required this.pokemon,
-    required this.likedPokemonList, required this.onLiked,
-  });
+    required this.likedPokemonList,
+    required this.onLiked,
+  }) : super(key: key);
 
   @override
   PokemonCardContentState createState() => PokemonCardContentState();
@@ -25,6 +27,8 @@ class PokemonCardContentState extends State<PokemonCardContent> {
   void initState() {
     super.initState();
     _imageUrl = getImageURL(widget.pokemon.imageURL);
+    // Initialize _isFavorited based on whether the pokemon is in likedPokemonList
+    _isFavorited = widget.likedPokemonList.contains(widget.pokemon);
   }
 
   Future<String> getImageURL(String imagePath) async {
@@ -43,11 +47,7 @@ class PokemonCardContentState extends State<PokemonCardContent> {
   void _toggleFavorite() {
     setState(() {
       _isFavorited = !_isFavorited;
-      if (_isFavorited) {
-        widget.onLiked(widget.pokemon); // Call the callback function
-      } else {
-        widget.likedPokemonList.remove(widget.pokemon);
-      }
+      widget.onLiked(widget.pokemon, _isFavorited); // Pass isLiked status
     });
   }
 
@@ -132,7 +132,6 @@ class PokemonCardContentState extends State<PokemonCardContent> {
                     ),
                     iconSize: 50,
                     onPressed: _toggleFavorite,
-
                   ),
                 ],
               ),
@@ -143,4 +142,3 @@ class PokemonCardContentState extends State<PokemonCardContent> {
     );
   }
 }
-
