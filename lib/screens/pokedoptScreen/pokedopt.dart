@@ -56,7 +56,6 @@ class PokeDoptState extends State<PokeDopt> {
       initialData: const [],
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
           title: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -67,39 +66,25 @@ class PokeDoptState extends State<PokeDopt> {
               SizedBox(width: 1),
             ],
           ),
-          actions: const [
-            SizedBox(width: 48),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                // Add your search logic here
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.filter_alt),
+              onPressed: () {
+                // Add your filter logic here
+              },
+            ),
           ],
         ),
-        body: Column(
+        body: const Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () {},
-                      child: IconButton(
-                        icon: const Icon(Icons.search),
-                        onPressed: () {},
-                      ),
-                    ),
-                  ],
-                ),
-                InkWell(
-                  onTap: () {},
-                  child: IconButton(
-                    icon: const Icon(Icons.filter_alt),
-                    onPressed: () {},
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 1),
-            const Expanded(
+            Expanded(
               child: PokemonCard(),
             ),
           ],

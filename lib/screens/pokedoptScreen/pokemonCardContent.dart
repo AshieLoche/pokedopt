@@ -50,7 +50,7 @@ class PokemonCardContent extends StatelessWidget {
                       if (snapshot.hasData) {
                         return Container(
                           width: 380,
-                          height: 200,
+                          height: 230,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             image: DecorationImage(
@@ -96,6 +96,7 @@ class PokemonCardContent extends StatelessWidget {
                       isLiked ? Icons.favorite : Icons.favorite_border,
                       color: isLiked ? Colors.red : Colors.grey,
                     ),
+                    iconSize: 50,
                     onPressed: () {
                       // setState(() {
                       //   isLiked = !isLiked;
