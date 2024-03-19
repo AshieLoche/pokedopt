@@ -15,53 +15,17 @@ class DatabaseService {
   final CollectionReference userCollection = FirebaseFirestore.instance.collection('users');
   final CollectionReference pokemonCollection = FirebaseFirestore.instance.collection('pokemons');
 
-  Future updateUserData(String pfpUrl, String username, String age, String gender, String typePreference, String regionPreference) async {
+  Future updateUserData(String pfpUrl, String username, String age, String gender, String typePreferences, String regionPreferences, Timestamp createdAt) async {
     // String pfpUrl = await uploadPfpImage(imageFile);
     return await userCollection.doc(uid).set({
       'pfpUrl': pfpUrl,
       'username': username,
       'age': age,
       'gender': gender,
-      'typePreference': typePreference,
-      'regionPreference': regionPreference,
+      'typePreferences': typePreferences,
+      'regionPreferences': regionPreferences,
+      'createdAt': createdAt,
     });
-  }
-
-  Future uploadPfpImage(XFile imageFile) async {
-    try {
-      Reference storageRef = FirebaseStorage.instance.ref();
-      Reference imageRef = storageRef.child('pfp_images/${imageFile.name}');
-      UploadTask uploadTask = imageRef.putFile(File(imageFile.path));
-
-      TaskSnapshot snapshot = await uploadTask;
-      String downloadUrl = await snapshot.ref.getDownloadURL();
-      return downloadUrl;  // This is the pfpUrl you'll store in Firestore
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error uploading image: $e');
-      }
-      return null;
-    }
-  }
-
-  // Get User Data Stream
-  Stream<UserData> get userData {
-    return userCollection.doc(uid).snapshots()
-    .map(_userDataFromSnapshot);
-  }
-
-  // User Data from Snapshot
-  UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
-    Map<String, dynamic> snap = snapshot.data() as Map<String, dynamic>;
-    return UserData(
-        uid: uid,
-        pfpUrl: snap['pfpUrl'],
-        username: snap['username'],
-        age: snap['age'],
-        gender:snap['gender'],
-        typePreference: snap['typePreference'],
-        regionPreference: snap['regionPreference']
-    );
   }
 
   // Pokemon List from snapshot
@@ -69,12 +33,12 @@ class DatabaseService {
     return snapshot.docs.map((doc) {
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
       return Pokemon(
-          name: data['name'] ?? '',
-          species: data['species'] ?? '',
-          imageURL: data['imageURL'] ?? '',
-          description: data['description'] ?? '',
-          types: data['type/s'] ?? '',
-          region: data['region'] ?? '',
+        name: data['name'] ?? '',
+        species: data['species'] ?? '',
+        imageURL: data['imageURL'] ?? '',
+        description: data['description'] ?? '',
+        types: data['type/s'] ?? '',
+        region: data['region'] ?? '',
       );
     }).toList();
   }
@@ -85,25 +49,68 @@ class DatabaseService {
     .map(_pokemonListFromSnapshot);
   }
 
-  // // Profile Model from Snapshot
-  // List<ProfileModel> _profileModelSnapshot(QuerySnapshot snapshot) {
-  //   return snapshot.docs.map((doc) {
-  //     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-  //     return ProfileModel(
-  //       pfpUrl: data['pfpUrl'] ?? '',
-  //       username: data['username'] ?? '',
-  //       age: data['age'] ?? '',
-  //       gender: data['gender'] ?? '',
-  //       typePreference: data['typePreference'] ?? '',
-  //       regionPreference: data['regionPreference'] ?? '',
-  //     );
-  //   }).toList();
-  // }
-  //
-  // // Get Pokemon Stream
-  // Stream<List<ProfileModel>> get profiles {
-  //   return pokemonCollection.snapshots()
-  //       .map(_profileModelSnapshot);
-  // }
+  // User Data from Snapshot
+  UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
+    Map<String, dynamic> snap = snapshot.data() as Map<String, dynamic>;
+    return UserData(
+        uid: uid,
+        pfpUrl: snap['pfpUrl'],
+        username: snap['username'],
+        age: snap['age'],
+        gender: snap['gender'],
+        typePreferences: snap['typePreferences'],
+        regionPreferences: snap['regionPreferences'],
+        createdAt: snap['createdAt'],
+    );
+  }
+
+  // Get User Data Stream
+  Stream<UserData> get userData {
+    return userCollection.doc(uid).snapshots()
+        .map(_userDataFromSnapshot);
+  }
+
+  // Retrieve Image From Database
+  Future<String> getImageURL(String imagePath) async {
+
+    final storage = FirebaseStorage.instanceFor(bucket: 'gs://pokedopt-c3b3f.appspot.com');
+
+    final imageRef = storage.ref().child(imagePath);
+
+    try {
+      final url = await imageRef.getDownloadURL();
+      return url;
+    } catch (error) {
+      print('Error retrieving image URL: $error');
+      // Handle error (e.g., display an error message to the user)
+      return ''; // Or a placeholder URL
+    }
+
+  }
+
+  // Upload Image
+  Future<String> uploadPfpImage(XFile imageFile, String uid) async {
+
+    final storage = FirebaseStorage.instanceFor(bucket: 'gs://pokedopt-c3b3f.appspot.com');
+
+    final imagePath = 'profilePics/$uid.${imageFile.name.split('.')[1]}';
+
+    final imageRef = storage.ref().child(imagePath);
+
+    try {
+
+      UploadTask uploadTask = imageRef.putFile(File(imageFile.path));
+
+      await uploadTask;
+
+      return imagePath;
+
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error uploading image: $e');
+      }
+      return '';
+    }
+  }
 
 }

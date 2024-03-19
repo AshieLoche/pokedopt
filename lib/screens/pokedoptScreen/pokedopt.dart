@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:pokedopt/screens/main/pokelist.dart';
+import 'package:pokedopt/screens/pokelistScreen/pokelist.dart';
 import 'package:pokedopt/screens/pokedoptScreen/pokemonCard.dart';
-import 'package:pokedopt/screens/main/profileData.dart';
-import 'package:pokedopt/screens/pokedoptScreen/pokemonCardContent.dart';
+import 'package:pokedopt/screens/profileScreen/profileData.dart';
 import 'package:pokedopt/services/database.dart';
 import 'package:provider/provider.dart';
 
@@ -26,7 +25,7 @@ class PokeDopt extends StatefulWidget {
 
 class PokeDoptState extends State<PokeDopt> {
 
-  //List<Pokemon> likedPokemons = [];
+  List<Pokemon> likedPokemons = [];
 
   // final List<Pokemon> pokemons = [
   //   Pokemon(personalName: 'My Pokemon 1',name: 'Gengar', imageUrl: 'assets/pokemon/gengar.jpg',description: 'To steal the life of its target, it slips into the prey’s shadow and silently waits for an opportunity.', type: 'Ghost/Poison'),
@@ -57,6 +56,7 @@ class PokeDoptState extends State<PokeDopt> {
       initialData: const [],
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -67,25 +67,39 @@ class PokeDoptState extends State<PokeDopt> {
               SizedBox(width: 1),
             ],
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                // Add your search logic here
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.filter_alt),
-              onPressed: () {
-                // Add your filter logic here
-              },
-            ),
+          actions: const [
+            SizedBox(width: 48),
           ],
         ),
-        body: const Column(
+        body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () {},
+                      child: IconButton(
+                        icon: const Icon(Icons.search),
+                        onPressed: () {},
+                      ),
+                    ),
+                  ],
+                ),
+                InkWell(
+                  onTap: () {},
+                  child: IconButton(
+                    icon: const Icon(Icons.filter_alt),
+                    onPressed: () {},
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            const Expanded(
               child: PokemonCard(),
             ),
           ],
@@ -114,7 +128,12 @@ class PokeDoptState extends State<PokeDopt> {
                 Navigator.pushNamed(context, '/PokeHome');
                 break;
               case 2:
-                Navigator.pushNamed(context, '/PokeList');
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => PokeList(likedPokemons: likedPokemons),
+                //   ),
+                // );
                 break;
             }
           },

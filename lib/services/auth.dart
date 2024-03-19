@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pokedopt/services/database.dart';
 
 import '../models/user.dart';
@@ -55,7 +56,7 @@ class AuthService {
       firebase.User? user = result.user;
 
       // Call updateUserData with userId and userData Map
-      await DatabaseService().updateUserData('0', 'Ash Ketchum', '21', 'Male', 'Ghost', 'Kalos');
+      await DatabaseService().updateUserData('0', 'Ash Ketchum', '21', 'Male', 'Ghost', 'Kalos', Timestamp.now());
 
       return _userFromFirebaseUser(user);
     } catch (e) {
