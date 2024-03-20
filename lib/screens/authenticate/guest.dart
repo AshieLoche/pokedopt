@@ -158,7 +158,6 @@ class _GuestState extends State<Guest> {
     passwordController.text = '';
     confirmPasswordController.text = '';
     setState(() {
-      email = '';
       password = '';
       confirmPassword = '';
       signUpError = (signUpReload) ? signUpError : '';
