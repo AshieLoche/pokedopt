@@ -84,10 +84,6 @@ class _PokeListCardContentState extends State<PokeListCardContent> {
                           ),
                           iconSize: 50,
                           onPressed: () async {
-                            setState(() {
-                              _isFavourited = !_isFavourited;
-                            });
-
                             await DatabaseService(uid: user!.uid).updateFavouriteData(favouritePokemon.id, favouritePokemon.name, _isFavourited);
                           }
                       )
