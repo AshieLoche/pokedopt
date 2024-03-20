@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
@@ -117,14 +116,18 @@ class _ProfileFormState extends State<ProfileForm> {
                                 style: ElevatedButton.styleFrom(),
                                 onPressed: () async {
                                   if (newPfp) {
-                                    setState(() => newPfp = false);
+                                    setState(() {
+                                      newPfp = false;
+                                    });
                                   } else {
                                     final picker = ImagePicker();
                                     final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-                                    setState(() {
-                                      _image = pickedImage!;
-                                      newPfp = true;
-                                    });
+                                    if (pickedImage != null) {
+                                      setState(() {
+                                        _image = pickedImage;
+                                        newPfp = true;
+                                      });
+                                    }
                                   }
                                 },
                                 child: (newPfp) ? const Text('Clear') : const Text('Choose from Gallery'),
@@ -282,7 +285,12 @@ class _ProfileFormState extends State<ProfileForm> {
                                       _typePreferences.join('/').toString(),
                                       _regionPreferences.join('/').toString(),
                                       userData.createdAt,
-                                    ).whenComplete(() => Navigator.of(context).pop(true));
+                                    ).whenComplete(() {
+                                      if (mounted) {
+                                        Navigator.of(context).popUntil((route) => route.isFirst);
+                                        Navigator.pushNamed(context, '/Profile');
+                                      }
+                                    });
                                   }
                                 },
                                 child: const Text('Save'),

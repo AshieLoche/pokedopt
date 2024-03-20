@@ -37,7 +37,6 @@ class _ProfileDataState extends State<ProfileData> {
             gender = userData.gender;
             typePreferences = userData.typePreferences;
             regionPreferences = userData.regionPreferences;
-            imageUrl = DatabaseService().getImageURL(userData.pfpUrl);
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

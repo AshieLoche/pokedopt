@@ -64,6 +64,34 @@ class _PokeListCardContentState extends State<PokeListCardContent> {
                   context, favouritePokemon); // Pass the Pokemon object
             },
             child: ListTile(
+              title: FutureBuilder<String>(
+                  future: imageUrl,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Container(
+                        height: 150,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(snapshot.data!),
+                          ),
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+                    // Display a progress indicator or placeholder while loading
+
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0), // Circular clipping
+                      child: const SizedBox(
+                        height: 150.0,
+                        child: Loading(), // Your loading indicator widget
+                      ),
+                    );
+                  },
+                ),
               subtitle: Column(
                 children: [
                   const SizedBox(height: 10),
@@ -78,49 +106,22 @@ class _PokeListCardContentState extends State<PokeListCardContent> {
                         ),
                       ),
                       IconButton(
-                          icon: Icon(
-                            _isFavourited ? Icons.favorite : Icons.favorite_border,
-                            color: _isFavourited ? Colors.red : Colors.grey,
+                          icon: const Icon(
+                            Icons.favorite,
+                            color: Colors.red,
                           ),
                           iconSize: 50,
                           onPressed: () async {
                             await DatabaseService(uid: user!.uid).updateFavouriteData(favouritePokemon.id, favouritePokemon.name, !_isFavourited);
-                            Navigator.of(context).pop();
-                            Navigator.pushNamed(context, '/PokeList');
+                            if (mounted) {
+                              Navigator.of(context).pop();
+                              Navigator.pushNamed(context, '/PokeList');
+                            }
                           }
                       )
                     ],
                   )
                 ],
-              ),
-              // Display personalName instead of just the name
-              title: FutureBuilder<String>(
-                future: imageUrl,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Container(
-                      height: 150,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(snapshot.data!),
-                        ),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  }
-                  // Display a progress indicator or placeholder while loading
-
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0), // Circular clipping
-                    child: const SizedBox(
-                      height: 150.0,
-                      child: Loading(), // Your loading indicator widget
-                    ),
-                  );
-                },
               ),
             ),
           ),
