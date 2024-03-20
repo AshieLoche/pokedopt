@@ -3,8 +3,6 @@ import 'package:pokedopt/models/pokemon.dart';
 import 'package:pokedopt/screens/pokelistScreen/pokelistCardContent.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/user.dart';
-import '../../services/database.dart';
 
 class PokeListCard extends StatefulWidget {
   const PokeListCard({super.key});

@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
 import 'package:pokedopt/models/user.dart';
 import 'package:pokedopt/screens/profileScreen/profileForm.dart';
 import 'package:pokedopt/services/database.dart';
