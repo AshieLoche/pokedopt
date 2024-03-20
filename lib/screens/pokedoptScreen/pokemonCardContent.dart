@@ -46,9 +46,8 @@ class PokemonCardContentState extends State<PokemonCardContent> {
   void _toggleFavorite() {
     setState(() {
       _isFavorited = !_isFavorited;
-      widget.onLiked(widget.pokemon, _isFavorited); // Pass isLiked status
+      widget.onLiked(widget.pokemon, _isFavorited);
 
-      // Print the name of the Pokémon and its liked status for debugging
       print('${widget.pokemon.name} is ${_isFavorited ? "liked" : "not liked"}');
     });
   }
