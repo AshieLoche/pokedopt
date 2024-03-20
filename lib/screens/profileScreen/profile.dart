@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:pokedopt/screens/profileScreen/profileData.dart';
-import 'package:pokedopt/services/auth.dart';
+import 'package:pokedopt/services/authService.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/user.dart';

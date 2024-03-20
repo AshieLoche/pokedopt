@@ -6,7 +6,7 @@ import '../models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:flutter/foundation.dart';
 
-import 'database.dart';
+import 'databaseService.dart';
 
 class AuthService {
 

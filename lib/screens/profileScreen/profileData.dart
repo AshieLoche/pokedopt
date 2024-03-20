@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokedopt/models/user.dart';
 import 'package:pokedopt/screens/profileScreen/profileForm.dart';
-import 'package:pokedopt/services/database.dart';
+import 'package:pokedopt/services/databaseService.dart';
 import 'package:provider/provider.dart';
 
 import '../../shared/loading.dart';
@@ -21,33 +21,6 @@ class _ProfileDataState extends State<ProfileData> {
   String gender = '';
   String typePreferences = '';
   String regionPreferences = '';
-
-  void _navigateToEditProfileScreen() async {
-    final updatedProfile = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ProfileForm(
-          currentPfpUrl: imageUrl,
-          currentUsername: username,
-          currentAge: age,
-          currentGender: gender,
-          currentTypePreferences: typePreferences,
-          currentRegionPreferences: regionPreferences,
-        ),
-      ),
-    );
-
-    if (updatedProfile != null) {
-      setState(() {
-        username = updatedProfile['username'];
-        age = updatedProfile['age'];
-        gender = updatedProfile['gender'];
-        typePreferences = updatedProfile['typePreferences'];
-        regionPreferences = updatedProfile['regionPreferences'];
-        // Update other fields similarly
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +94,7 @@ class _ProfileDataState extends State<ProfileData> {
                                 ),
                                 child: TextButton(
                                   onPressed: () {
-                                    _navigateToEditProfileScreen();
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileForm()));
                                   },
                                   child: const Text(
                                     'Edit Profile',

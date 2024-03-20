@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:pokedopt/screens/pokelistScreen/pokelistCard.dart';
-import 'package:pokedopt/services/database.dart';
+import 'package:pokedopt/services/databaseService.dart';
 import 'package:provider/provider.dart';
 import '../../models/pokemon.dart';
 import '../../models/user.dart';

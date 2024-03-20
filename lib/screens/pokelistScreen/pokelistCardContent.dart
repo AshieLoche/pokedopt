@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/pokemon.dart';
 import '../../models/user.dart';
-import '../../services/database.dart';
+import '../../services/databaseService.dart';
 import '../../shared/loading.dart';
 
 class PokeListCardContent extends StatefulWidget {
@@ -37,7 +37,7 @@ class _PokeListCardContentState extends State<PokeListCardContent> {
 
     final user = Provider.of<User?>(context);
     final pokemons = Provider.of<List<Pokemon>>(context);
-    
+
     for (var pokemon in pokemons) {
       if (pokemon.id == favouritePokemon.id) {
         setState(() {
@@ -85,6 +85,8 @@ class _PokeListCardContentState extends State<PokeListCardContent> {
                           iconSize: 50,
                           onPressed: () async {
                             await DatabaseService(uid: user!.uid).updateFavouriteData(favouritePokemon.id, favouritePokemon.name, !_isFavourited);
+                            Navigator.of(context).pop();
+                            Navigator.pushNamed(context, '/PokeList');
                           }
                       )
                     ],

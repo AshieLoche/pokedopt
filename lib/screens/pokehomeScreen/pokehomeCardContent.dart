@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pokedopt/services/database.dart';
+import 'package:pokedopt/services/databaseService.dart';
 import 'package:pokedopt/shared/loading.dart';
 import 'package:provider/provider.dart';
 import '../../models/pokemon.dart';

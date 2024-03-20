@@ -8,25 +8,11 @@ import 'package:pokedopt/shared/loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/user.dart';
-import '../../services/database.dart';
+import '../../services/databaseService.dart';
 
 class ProfileForm extends StatefulWidget {
-  final Future<String> currentPfpUrl;
-  final String currentUsername;
-  final String currentAge;
-  final String currentGender;
-  final String currentTypePreferences;
-  final String currentRegionPreferences;
 
-  const ProfileForm({
-    super.key,
-    required this.currentPfpUrl,
-    required this.currentUsername,
-    required this.currentAge,
-    required this.currentGender,
-    required this.currentTypePreferences,
-    required this.currentRegionPreferences,
-  });
+  const ProfileForm({super.key,});
 
   @override
   State<ProfileForm> createState() => _ProfileFormState();
@@ -35,12 +21,12 @@ class ProfileForm extends StatefulWidget {
 class _ProfileFormState extends State<ProfileForm> {
 
   final _formKey = GlobalKey<FormState>();
-  late XFile _image;
+  late XFile _image = XFile('');
   final _usernameController = TextEditingController();
   final _ageController = TextEditingController();
-  late String _gender;
-  late List<String> _typePreferences;
-  late List<String> _regionPreferences;
+  late String _gender = 'Male';
+  late List<String> _typePreferences = [];
+  late List<String> _regionPreferences = [];
   bool newPfp = false;
 
   final List<String> genders = ['Male', 'Female', 'Non-Binary'];
@@ -48,27 +34,9 @@ class _ProfileFormState extends State<ProfileForm> {
   final List<String> regions = ['Kanto', 'Johto', 'Hoenn', 'Sinnoh', 'Unovah', 'Kalos', 'Alola', 'Galar', 'Paldea'];
 
   @override
-  initState() {
-    super.initState();
-    void getImage() async {
-      _image = XFile(Uri.parse(await widget.currentPfpUrl).pathSegments.last);
-    }
-    getImage();
-    _usernameController.text = widget.currentUsername;
-    _ageController.text = widget.currentAge;
-    _gender = widget.currentGender;
-    _typePreferences = widget.currentTypePreferences.split('/');
-    _regionPreferences = widget.currentRegionPreferences.split('/');
-  }
-
-  @override
   void dispose() {
-    _image = XFile('');
     _usernameController.dispose();
     _ageController.dispose();
-    _gender = '';
-    _typePreferences = [];
-    _regionPreferences = [];
     super.dispose();
   }
 
@@ -87,6 +55,12 @@ class _ProfileFormState extends State<ProfileForm> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               UserData? userData = snapshot.data;
+              Future<String> imagePath = DatabaseService().getImageURL(userData!.pfpUrl);
+              _usernameController.text = userData.username;
+              _ageController.text = userData.age;
+              _gender = userData.gender;
+              _typePreferences = userData.typePreferences.split('/');
+              _regionPreferences = userData.regionPreferences.split('/');
               return Column(
                 children: [
                   const Divider(),
@@ -109,7 +83,7 @@ class _ProfileFormState extends State<ProfileForm> {
                           Row(
                             children: [
                               FutureBuilder<String>(
-                                future: widget.currentPfpUrl,
+                                future: imagePath,
                                 builder: (context, snapshot) {
                                   if (snapshot.hasData) {
                                     return (newPfp) ?
@@ -160,7 +134,7 @@ class _ProfileFormState extends State<ProfileForm> {
                           TextFormField(
                             controller: _usernameController,
                             decoration: const InputDecoration(
-                                labelText: 'Name',
+                                labelText: 'Username',
                                 labelStyle: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -204,7 +178,7 @@ class _ProfileFormState extends State<ProfileForm> {
                           DropdownButtonFormField<String>(
                             value: _gender,
                             onChanged: (val) {
-                              setState(() => _gender = val!);
+                              _gender = val!;
                             },
                             items: genders.map((String value) {
                               return DropdownMenuItem<String>(
@@ -248,10 +222,8 @@ class _ProfileFormState extends State<ProfileForm> {
                               confirmText: const Text('Save', style: TextStyle(color: Colors.white),),
                               buttonText: const Text('Type/s', style: TextStyle(fontSize: 15),),
                               onConfirm: (List<String> selected) {
-                                setState(() {
-                                  selected.remove('');
-                                  _typePreferences = selected;
-                                });
+                                selected.remove('');
+                                _typePreferences = selected;
                               }
                           ),
                           const SizedBox(height: 10),
@@ -289,10 +261,8 @@ class _ProfileFormState extends State<ProfileForm> {
                               confirmText: const Text('Save', style: TextStyle(color: Colors.white),),
                               buttonText: const Text('Region/s', style: TextStyle(fontSize: 15),),
                               onConfirm: (List<String> selected) {
-                                setState(() {
-                                  selected.remove('');
-                                  _regionPreferences = selected;
-                                });
+                                selected.remove('');
+                                _regionPreferences = selected;
                               }
                           ),
                           const SizedBox(height: 10),
@@ -305,13 +275,13 @@ class _ProfileFormState extends State<ProfileForm> {
                                   if (_formKey.currentState!.validate()) {
 
                                     await DatabaseService(uid: user.uid).updateUserData(
-                                        (newPfp) ? await DatabaseService().uploadPfpImage(_image, user.uid) : _image.path,
+                                        (newPfp) ? await DatabaseService().uploadPfpImage(_image, user.uid) : userData.pfpUrl,
                                       _usernameController.text.trim(),
                                       _ageController.text.trim(),
                                       _gender,
                                       _typePreferences.join('/').toString(),
                                       _regionPreferences.join('/').toString(),
-                                      userData!.createdAt,
+                                      userData.createdAt,
                                     ).whenComplete(() => Navigator.of(context).pop(true));
                                   }
                                 },
@@ -339,21 +309,5 @@ class _ProfileFormState extends State<ProfileForm> {
         ),
       ),
     );
-  }
-
-  void _updateProfileAndPop() {
-
-    final newUsername = _usernameController.text.trim();
-    final newAge = _ageController.text.trim();
-    final newGender = _gender.toString().trim();
-    final newTypePreferences = _typePreferences.join('/').toString();
-    final newRegionPreferences = _regionPreferences.join('/').toString();
-    Navigator.pop(context, {
-      'username': newUsername,
-      'age': newAge,
-      'gender': newGender,
-      'typePreferences': newTypePreferences,
-      'regionPreferences': newRegionPreferences,
-    });
   }
 }

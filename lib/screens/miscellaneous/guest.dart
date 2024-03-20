@@ -1,13 +1,12 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
-import '../../services/auth.dart';
+import '../../services/authService.dart';
 import '../../shared/loading.dart';
-// import '../main/profileData.dart';
 
+// A page for users who hasn't logged in yet
 class Guest extends StatefulWidget {
   const Guest({super.key});
 
@@ -17,20 +16,28 @@ class Guest extends StatefulWidget {
 
 class _GuestState extends State<Guest> {
 
+  // Get FIrebase User
   final AuthService _auth = AuthService();
+
+  // Text Editing Controller
   final signUpEmailController = TextEditingController();
   final loginEmailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-  late XFile _image = XFile('');
   final _usernameController = TextEditingController();
   final _ageController = TextEditingController();
+
+  // Form Variables
+  late XFile _image = XFile('');
   late String _gender = 'Male';
   late List<String> _typePreferences = [];
   late List<String> _regionPreferences = [];
   bool newPfp = false;
 
+  // Gender List for Sign Up Form
   final List<String> genders = ['Male', 'Female', 'Non-Binary'];
+
+  // Type List for Sign Up Form
   final List<String> types = ['Fire', 'Water', 'Grass', 'Electric', 'Ghost', 'Steel', 'Ground', 'Rock', 'Fairy', 'Dragon', 'Poison', 'Dark', 'Psychic', 'Bug', 'Fighting', 'Normal', 'Flying', 'Ice'];
   final List<String> regions = ['Kanto', 'Johto', 'Hoenn', 'Sinnoh', 'Unovah', 'Kalos', 'Alola', 'Galar', 'Paldea'];
 
@@ -312,7 +319,6 @@ class _GuestState extends State<Guest> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // const SizedBox(height: 20),
                   const Text(
                       'Profile Pic',
                       style: TextStyle(
@@ -617,27 +623,6 @@ class _GuestState extends State<Guest> {
                       onPressed: () async {
 
                         logInForm();
-
-                        // dynamic result = await _auth.signInAnon();
-                        //
-                        // if (result == null) {
-                        //   print('Error signing in');
-                        // } else {
-                        //   // Add your login functionality here
-                        //   Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (context) => const EditProfileScreen(
-                        //         initialUsername: '',
-                        //         initialAge: '',
-                        //         initialGender: 'Male',
-                        //         initialTypePreferences: '',
-                        //         initialRegionPreferences: '',
-                        //         newRegister: true,
-                        //       ),
-                        //     ),
-                        //   );
-                        // }
                       },
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(

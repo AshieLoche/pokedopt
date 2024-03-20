@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokedopt/screens/pokehomeScreen/pokehomeCard.dart';
-import 'package:pokedopt/services/database.dart';
+import 'package:pokedopt/services/databaseService.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/pokemon.dart';
