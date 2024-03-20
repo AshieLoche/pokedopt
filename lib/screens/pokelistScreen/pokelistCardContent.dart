@@ -37,7 +37,7 @@ class _PokeListCardContentState extends State<PokeListCardContent> {
 
     final user = Provider.of<User?>(context);
     final pokemons = Provider.of<List<Pokemon>>(context);
-    // print(favouritePokemon.id);
+    
     for (var pokemon in pokemons) {
       if (pokemon.id == favouritePokemon.id) {
         setState(() {
