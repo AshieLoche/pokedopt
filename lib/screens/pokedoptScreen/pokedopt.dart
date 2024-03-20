@@ -6,13 +6,8 @@ import 'package:provider/provider.dart';
 import '../../models/pokemon.dart';
 
 class PokeDopt extends StatefulWidget {
-  final List<Pokemon> likedPokemons;
 
-  const PokeDopt({
-    super.key,
-    required this.likedPokemons,
-  });
-
+  const PokeDopt({super.key});
 
   @override
   PokeDoptState createState() => PokeDoptState();
@@ -20,30 +15,6 @@ class PokeDopt extends StatefulWidget {
 }
 
 class PokeDoptState extends State<PokeDopt> {
-
-  List<Pokemon> likedPokemons = [];
-
-  // final List<Pokemon> pokemons = [
-  //   Pokemon(personalName: 'My Pokemon 1',name: 'Gengar', imageUrl: 'assets/pokemon/gengar.jpg',description: 'To steal the life of its target, it slips into the prey’s shadow and silently waits for an opportunity.', type: 'Ghost/Poison'),
-  //   Pokemon(personalName: 'My Pokemon 2',name: 'Dragonite', imageUrl: 'assets/pokemon/dragonite.jpg',description: 'It is said that somewhere in the ocean lies an island where these gather. Only they live there.', type: 'Dragon'),
-  //   Pokemon(personalName: 'My Pokemon 3',name: 'Chandelure', imageUrl: 'assets/pokemon/chandelure.jpg',description: 'The spirits burned up in its ominous flame lose their way and wander this world forever.', type: 'Ghost'),
-  //   // Add more Pokemon data here
-  // ];
-  //
-  // // Function to update likedPokemons list
-  // void updateLikedPokemons(Pokemon pokemons) {
-  //   setState(() {
-  //     if (!likedPokemons.contains(pokemons)) {
-  //       likedPokemons.add(pokemons);
-  //     }
-  //   }); // Pass likedPokemons list to PokeList when navigating
-  //   Navigator.pushReplacement(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => PokeList(likedPokemons: likedPokemons),
-  //     ),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -67,35 +38,11 @@ class PokeDoptState extends State<PokeDopt> {
             SizedBox(width: 48),
           ],
         ),
-        body: Column(
+        body: const Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () {},
-                      child: IconButton(
-                        icon: const Icon(Icons.search),
-                        onPressed: () {},
-                      ),
-                    ),
-                  ],
-                ),
-                InkWell(
-                  onTap: () {},
-                  child: IconButton(
-                    icon: const Icon(Icons.filter_alt),
-                    onPressed: () {},
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            const Expanded(
+            SizedBox(height: 10),
+            Expanded(
               child: PokemonCard(),
             ),
           ],

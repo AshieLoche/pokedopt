@@ -11,6 +11,6 @@ class Wrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<User?>(context);
 
-    return user == null ? const Authenticate() : const PokeDopt(likedPokemons: []);
+    return user == null ? const Authenticate() : const PokeDopt();
   }
 }

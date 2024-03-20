@@ -14,6 +14,7 @@ class DatabaseService {
   // Collection Reference
   final CollectionReference userCollection = FirebaseFirestore.instance.collection('users');
   final CollectionReference pokemonCollection = FirebaseFirestore.instance.collection('pokemons');
+  final CollectionReference favouriteCollection = FirebaseFirestore.instance.collection('favourites');
 
   Future updateUserData(String pfpUrl, String username, String age, String gender, String typePreferences, String regionPreferences, Timestamp createdAt) async {
     // String pfpUrl = await uploadPfpImage(imageFile);
@@ -27,6 +28,11 @@ class DatabaseService {
       'createdAt': createdAt,
     });
   }
+
+  // Future updateFavouriteData(String pokemonUid) async {
+  //   // String pfpUrl = await uploadPfpImage(imageFile);
+  //   return await userCollection.doc(uid).update(data)
+  // }
 
   // Pokemon List from snapshot
   List<Pokemon> _pokemonListFromSnapshot(QuerySnapshot snapshot) {
