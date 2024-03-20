@@ -34,17 +34,18 @@ class _PokeHomeCardContentState extends State<PokeHomeCardContent> {
     Future<String> imageUrl = DatabaseService().getImageURL(pokemon.imageURL);
     final user = Provider.of<User?>(context);
     final favourites = Provider.of<List<FavouritePokemon>>(context);
+
     for (var favourite in favourites) {
-      if (pokemon.id == favourite.pokemonId) {
-        setState(() {
-          _isFavourited = true;
-        });
-        break;
-      } else {
-        setState(() {
-          _isFavourited = false;
-        });
-      }
+      // if (pokemon.id == favourite.pokemonId) {
+      //   setState(() {
+      //     _isFavourited = true;
+      //   });
+      //   break;
+      // } else {
+      //   setState(() {
+      //     _isFavourited = false;
+      //   });
+      // }
     }
 
     return SizedBox(

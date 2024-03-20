@@ -20,17 +20,19 @@ class PokeHomeState extends State<PokeHome> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User?>(context);
+
     return MultiProvider(
       providers: [
-          StreamProvider<List<FavouritePokemon>>.value(
-              value: DatabaseService(uid: user!.uid).favourites,
-              initialData: const []
-          ),
-          StreamProvider<List<Pokemon>>.value(
-              value: DatabaseService().pokemons,
-              initialData: const []
-          ),
-        ],
+        StreamProvider<List<Pokemon>>.value(
+            value: DatabaseService(uid: user!.uid).pokemons,
+            initialData: const []
+        ),
+        StreamProvider<List<FavouritePokemon>>.value(
+          value: DatabaseService(uid: user.uid).favourites,
+          initialData: const [],
+          catchError: (_, __) => const[],
+        ),
+      ],
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,

@@ -29,6 +29,12 @@ class DatabaseService {
     });
   }
 
+  Future createFavouriteDocument() async {
+    return await favouriteCollection.doc(uid).set({
+      'exist': ''
+    });
+  }
+
   Future updateFavouriteData(String pokemonId, String pokemonName, bool isFavourited) async {
     return (isFavourited) ? await favouriteCollection.doc(uid).update({
       pokemonName: pokemonId,
@@ -59,18 +65,16 @@ class DatabaseService {
     .map(_pokemonListFromSnapshot);
   }
 
-  List<FavouritePokemon> _favouriteFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.docs.map((doc) {
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      return data.values.map((pokemonId) => FavouritePokemon(
-        userId: doc.id,
-        pokemonId: pokemonId,
-      )).toList();
-    }).toList().expand((element) => element).toList();
+  List<FavouritePokemon> _favouriteFromSnapshot(DocumentSnapshot snapshot) {
+    Map<String, dynamic> snap = snapshot.data() as Map<String, dynamic>;
+    return snap.values.map((value) => FavouritePokemon(
+        userId: snapshot.id,
+        pokemonId: value,
+    )).toList();
   }
 
   Stream<List<FavouritePokemon>> get favourites {
-    return favouriteCollection.snapshots().map(_favouriteFromSnapshot);
+    return favouriteCollection.doc(uid).snapshots().map(_favouriteFromSnapshot);
   }
 
   // User Data from Snapshot

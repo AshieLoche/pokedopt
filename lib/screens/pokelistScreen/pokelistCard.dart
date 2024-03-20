@@ -28,7 +28,7 @@ class _PokeListCardState extends State<PokeListCard> {
     }
     return ListView.builder(
       scrollDirection: Axis.vertical,
-      itemCount: favourites.length,
+      itemCount: favouritePokemons.length,
       itemBuilder: (context, index) {
         return PokeListCardContent(favouritePokemon: favouritePokemons[index]);
       },

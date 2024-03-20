@@ -69,6 +69,8 @@ class AuthService {
         Timestamp.now(),
       );
 
+      await DatabaseService(uid: user.uid).createFavouriteDocument();
+
       return _userFromFirebaseUser(user);
     } catch (e) {
       if (kDebugMode) {

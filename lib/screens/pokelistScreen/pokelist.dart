@@ -20,8 +20,9 @@ class _PokeListState extends State<PokeList> {
     return MultiProvider(
       providers: [
           StreamProvider<List<FavouritePokemon>>.value(
-              value: DatabaseService(uid: user!.uid).favourites,
-              initialData: const []
+            value: DatabaseService(uid: user!.uid).favourites,
+            initialData: const [],
+            catchError: (_, __) => const[],
           ),
           StreamProvider<List<Pokemon>>.value(
               value: DatabaseService().pokemons,
