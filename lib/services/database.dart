@@ -14,6 +14,7 @@ class DatabaseService {
   // Collection Reference
   final CollectionReference userCollection = FirebaseFirestore.instance.collection('users');
   final CollectionReference pokemonCollection = FirebaseFirestore.instance.collection('pokemons');
+  final CollectionReference favouriteCollection = FirebaseFirestore.instance.collection('favourites');
 
   Future updateUserData(String pfpUrl, String username, String age, String gender, String typePreferences, String regionPreferences, Timestamp createdAt) async {
     // String pfpUrl = await uploadPfpImage(imageFile);
@@ -28,17 +29,26 @@ class DatabaseService {
     });
   }
 
+  Future updateFavouriteData(String pokemonId, String pokemonName, bool isFavourited) async {
+    return (isFavourited) ? await favouriteCollection.doc(uid).update({
+      pokemonName: pokemonId,
+    }) : await favouriteCollection.doc(uid).update({
+      pokemonName: FieldValue.delete(),
+    });
+  }
+
   // Pokemon List from snapshot
   List<Pokemon> _pokemonListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
       return Pokemon(
-        name: data['name'] ?? '',
-        species: data['species'] ?? '',
-        imageURL: data['imageURL'] ?? '',
-        description: data['description'] ?? '',
-        types: data['type/s'] ?? '',
-        region: data['region'] ?? '',
+        id: doc.id,
+        name: data['name'],
+        species: data['species'],
+        imageURL: data['imageURL'],
+        description: data['description'],
+        types: data['type/s'],
+        region: data['region'],
       );
     }).toList();
   }
@@ -47,6 +57,20 @@ class DatabaseService {
   Stream<List<Pokemon>> get pokemons {
     return pokemonCollection.snapshots()
     .map(_pokemonListFromSnapshot);
+  }
+
+  List<FavouritePokemon> _favouriteFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      return data.values.map((pokemonId) => FavouritePokemon(
+        userId: doc.id,
+        pokemonId: pokemonId,
+      )).toList();
+    }).toList().expand((element) => element).toList();
+  }
+
+  Stream<List<FavouritePokemon>> get favourites {
+    return favouriteCollection.snapshots().map(_favouriteFromSnapshot);
   }
 
   // User Data from Snapshot

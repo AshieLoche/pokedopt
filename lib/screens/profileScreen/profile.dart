@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:pokedopt/screens/profileScreen/profileData.dart';
 import 'package:pokedopt/services/auth.dart';
-import 'package:pokedopt/services/database.dart';
-import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -63,7 +60,7 @@ class ProfileState extends State<Profile> {
               break;
             case 1:
               // Handle PokeHome icon tap
-              Navigator.pushNamed(context, '/PokeDopt');
+              Navigator.pushNamed(context, '/PokeHome');
               break;
             case 2:
               // Handle PokeList icon tap

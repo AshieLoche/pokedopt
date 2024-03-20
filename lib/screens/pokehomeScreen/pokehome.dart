@@ -1,19 +1,22 @@
-
 import 'package:flutter/material.dart';
-import 'package:pokedopt/screens/pokelistScreen/pokelistCard.dart';
+import 'package:pokedopt/screens/pokehomeScreen/pokehomeCard.dart';
 import 'package:pokedopt/services/database.dart';
 import 'package:provider/provider.dart';
+
 import '../../models/pokemon.dart';
 import '../../models/user.dart';
 
-class PokeList extends StatefulWidget {
-  const PokeList({super.key});
+class PokeHome extends StatefulWidget {
+
+  const PokeHome({super.key});
 
   @override
-  State<PokeList> createState() => _PokeListState();
+  PokeHomeState createState() => PokeHomeState();
+
 }
 
-class _PokeListState extends State<PokeList> {
+class PokeHomeState extends State<PokeHome> {
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User?>(context);
@@ -27,17 +30,26 @@ class _PokeListState extends State<PokeList> {
               value: DatabaseService().pokemons,
               initialData: const []
           ),
-      ],
+        ],
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('PokeList'),
-          centerTitle: true,
+          automaticallyImplyLeading: false,
+          title: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ImageIcon(AssetImage('assets/pokedopt.ico')),
+              SizedBox(width: 3),
+              Text('PokeDopt'),
+            ],
+          ),
         ),
         body: const Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Divider(),
             Expanded(
-              child:PokeListCard(),
+              child: PokeHomeCard(),
             ),
           ],
         ),
@@ -48,13 +60,11 @@ class _PokeListState extends State<PokeList> {
               label: 'Profile',
             ),
             BottomNavigationBarItem(
-              icon: ImageIcon(
-                  AssetImage('assets/pokedopt.ico'), color: Colors.orange),
-              label: 'PokeDopt',
+              icon: ImageIcon(AssetImage('assets/pokedopt.ico'), color: Colors.orange),
+              label: 'PokeHome',
             ),
             BottomNavigationBarItem(
-              icon: ImageIcon(
-                  AssetImage('assets/pokepals.ico'), color: Colors.orange),
+              icon: ImageIcon(AssetImage('assets/pokepals.ico'), color: Colors.orange),
               label: 'PokeList',
             ),
           ],

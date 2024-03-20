@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedopt/models/user.dart';
+import 'package:pokedopt/screens/pokehomeScreen/pokehome.dart';
 import 'package:pokedopt/screens/pokelistScreen/pokelist.dart';
-import 'package:pokedopt/screens/pokedoptScreen/pokedopt.dart';
 import 'package:pokedopt/screens/profileScreen/profile.dart';
 import 'package:pokedopt/screens/wrapper.dart';
 import 'package:pokedopt/services/auth.dart';
@@ -38,9 +38,8 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => const Wrapper(), // Route for the main page
           '/Profile': (context) => const Profile(), // Route for the profile page
-          // '/PokeList': (context) => const PokeList(likedPokemons: [],), // Route for the cart page(PokeList)
-          '/PokeDopt': (context) => const PokeDopt(likedPokemons: [],), // Route for the PokeDopt page
-          '/PokeList': (context) => PokeList(likedPokemonList: []),
+          '/PokeList': (context) => const PokeList(), // Route for the cart page(PokeList)
+          '/PokeHome': (context) => const PokeHome(), // Route for the PokeDopt page
         },
       ),
     );
