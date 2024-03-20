@@ -37,7 +37,7 @@ class _PokeListCardContentState extends State<PokeListCardContent> {
 
     final user = Provider.of<User?>(context);
     final pokemons = Provider.of<List<Pokemon>>(context);
-
+    // print(favouritePokemon.id);
     for (var pokemon in pokemons) {
       if (pokemon.id == favouritePokemon.id) {
         setState(() {
@@ -84,11 +84,7 @@ class _PokeListCardContentState extends State<PokeListCardContent> {
                           ),
                           iconSize: 50,
                           onPressed: () async {
-                            setState(() {
-                              _isFavourited = !_isFavourited;
-                            });
-
-                            await DatabaseService(uid: user!.uid).updateFavouriteData(favouritePokemon.id, favouritePokemon.name, _isFavourited);
+                            await DatabaseService(uid: user!.uid).updateFavouriteData(favouritePokemon.id, favouritePokemon.name, !_isFavourited);
                           }
                       )
                     ],
