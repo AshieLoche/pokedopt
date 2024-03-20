@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:pokedopt/models/user.dart';
-import 'package:pokedopt/screens/pokedoptScreen/pokedopt.dart';
+import 'package:pokedopt/screens/pokehomeScreen/pokehome.dart';
 import 'package:provider/provider.dart';
 import 'authenticate/authenticate.dart';
 
@@ -11,6 +11,6 @@ class Wrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<User?>(context);
 
-    return user == null ? const Authenticate() : const PokeDopt();
+    return user == null ? const Authenticate() : const PokeHome();
   }
 }

@@ -18,19 +18,28 @@ class _PokeListState extends State<PokeList> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User?>(context);
-    return StreamProvider<List<FavouritePokemon>>.value(
-      value: DatabaseService(uid: user!.uid).favourites,
-      initialData: const [],
+    return MultiProvider(
+      providers: [
+          StreamProvider<List<FavouritePokemon>>.value(
+              value: DatabaseService(uid: user!.uid).favourites,
+              initialData: const []
+          ),
+          StreamProvider<List<Pokemon>>.value(
+              value: DatabaseService().pokemons,
+              initialData: const []
+          ),
+      ],
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('PokeList Pages'),
+          title: const Text('PokeList'),
           centerTitle: true,
-          automaticallyImplyLeading: false,
         ),
         body: const Column(
           children: [
             Divider(),
-            PokeListCard(),
+            Expanded(
+              child:PokeListCard(),
+            ),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(

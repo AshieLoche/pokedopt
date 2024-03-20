@@ -30,7 +30,6 @@ class DatabaseService {
   }
 
   Future updateFavouriteData(String pokemonId, String pokemonName, bool isFavourited) async {
-    // String pfpUrl = await uploadPfpImage(imageFile);
     return (isFavourited) ? await favouriteCollection.doc(uid).update({
       pokemonName: pokemonId,
     }) : await favouriteCollection.doc(uid).update({

@@ -5,19 +5,19 @@ import 'package:provider/provider.dart';
 import '../../models/pokemon.dart';
 import '../../models/user.dart';
 
-class PokemonCardContent extends StatefulWidget {
+class PokeHomeCardContent extends StatefulWidget {
 
   final Pokemon pokemon;
-  const PokemonCardContent({
+  const PokeHomeCardContent({
     super.key,
     required this.pokemon,
   });
 
   @override
-  State<PokemonCardContent> createState() => _PokemonCardContentState();
+  State<PokeHomeCardContent> createState() => _PokeHomeCardContentState();
 }
 
-class _PokemonCardContentState extends State<PokemonCardContent> {
+class _PokeHomeCardContentState extends State<PokeHomeCardContent> {
 
   late Pokemon pokemon;
   late bool _isFavourited;
@@ -33,6 +33,19 @@ class _PokemonCardContentState extends State<PokemonCardContent> {
   Widget build(BuildContext context) {
     Future<String> imageUrl = DatabaseService().getImageURL(pokemon.imageURL);
     final user = Provider.of<User?>(context);
+    final favourites = Provider.of<List<FavouritePokemon>>(context);
+    for (var favourite in favourites) {
+      if (pokemon.id == favourite.pokemonId) {
+        setState(() {
+          _isFavourited = true;
+        });
+        break;
+      } else {
+        setState(() {
+          _isFavourited = false;
+        });
+      }
+    }
 
     return SizedBox(
       width: MediaQuery.of(context).size.width * 1,
@@ -63,13 +76,13 @@ class _PokemonCardContentState extends State<PokemonCardContent> {
                         return Text('Error: ${snapshot.error}');
                       }
                       // Display a progress indicator or placeholder while loading
-                      return Container(
-                        width: 380,
-                        height: 250,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0), // Circular clipping
+                        child: const SizedBox(
+                          width: 380.0,
+                          height: 250.0,
+                          child: Loading(), // Your loading indicator widget
                         ),
-                        child: const Loading(),
                       );
                     },
                   ),

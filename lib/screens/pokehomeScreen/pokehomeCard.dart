@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:pokedopt/screens/pokedoptScreen/pokemonCardContent.dart';
+import 'package:pokedopt/screens/pokehomeScreen/pokehomeCardContent.dart';
 import 'package:provider/provider.dart';
 import '../../models/pokemon.dart';
 
-class PokemonCard extends StatefulWidget {
-  const PokemonCard({super.key});
+class PokeHomeCard extends StatefulWidget {
+  const PokeHomeCard({super.key});
 
   @override
-  PokemonCardState createState() => PokemonCardState();
+  PokeHomeCardState createState() => PokeHomeCardState();
 }
 
-class PokemonCardState extends State<PokemonCard> {
+class PokeHomeCardState extends State<PokeHomeCard> {
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class PokemonCardState extends State<PokemonCard> {
       scrollDirection: Axis.horizontal,
       itemCount: pokemons.length,
       itemBuilder: (context, index) {
-        return PokemonCardContent(pokemon: pokemons[index]);
+        return PokeHomeCardContent(pokemon: pokemons[index]);
       },
     );
   }

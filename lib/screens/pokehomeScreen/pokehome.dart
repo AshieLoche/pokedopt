@@ -1,26 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:pokedopt/screens/pokedoptScreen/pokemonCard.dart';
+import 'package:pokedopt/screens/pokehomeScreen/pokehomeCard.dart';
 import 'package:pokedopt/services/database.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/pokemon.dart';
+import '../../models/user.dart';
 
-class PokeDopt extends StatefulWidget {
+class PokeHome extends StatefulWidget {
 
-  const PokeDopt({super.key});
+  const PokeHome({super.key});
 
   @override
-  PokeDoptState createState() => PokeDoptState();
+  PokeHomeState createState() => PokeHomeState();
 
 }
 
-class PokeDoptState extends State<PokeDopt> {
+class PokeHomeState extends State<PokeHome> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<List<Pokemon>>.value(
-      value: DatabaseService().pokemons,
-      initialData: const [],
+    final user = Provider.of<User?>(context);
+    return MultiProvider(
+      providers: [
+          StreamProvider<List<FavouritePokemon>>.value(
+              value: DatabaseService(uid: user!.uid).favourites,
+              initialData: const []
+          ),
+          StreamProvider<List<Pokemon>>.value(
+              value: DatabaseService().pokemons,
+              initialData: const []
+          ),
+        ],
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -39,7 +49,7 @@ class PokeDoptState extends State<PokeDopt> {
           children: [
             Divider(),
             Expanded(
-              child: PokemonCard(),
+              child: PokeHomeCard(),
             ),
           ],
         ),
