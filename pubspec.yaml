@@ -72,7 +72,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/bannerPikachu.jpg
-    - assets/asheprofile.png
+    - assets/defaultPfp.png
     - assets/pokedopt.ico
     - assets/pokepals.ico
     - assets/pokemon/chandelure.jpg

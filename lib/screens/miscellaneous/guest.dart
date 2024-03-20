@@ -1,10 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
-import '../../services/auth.dart';
+import '../../services/authService.dart';
 import '../../shared/loading.dart';
-// import '../main/profileData.dart';
 
+// A page for users who hasn't logged in yet
 class Guest extends StatefulWidget {
   const Guest({super.key});
 
@@ -14,18 +16,28 @@ class Guest extends StatefulWidget {
 
 class _GuestState extends State<Guest> {
 
+  // Get FIrebase User
   final AuthService _auth = AuthService();
+
+  // Text Editing Controller
   final signUpEmailController = TextEditingController();
   final loginEmailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final _usernameController = TextEditingController();
   final _ageController = TextEditingController();
-  late String _gender = '';
+
+  // Form Variables
+  late XFile _image = XFile('');
+  late String _gender = 'Male';
   late List<String> _typePreferences = [];
   late List<String> _regionPreferences = [];
+  bool newPfp = false;
 
+  // Gender List for Sign Up Form
   final List<String> genders = ['Male', 'Female', 'Non-Binary'];
+
+  // Type List for Sign Up Form
   final List<String> types = ['Fire', 'Water', 'Grass', 'Electric', 'Ghost', 'Steel', 'Ground', 'Rock', 'Fairy', 'Dragon', 'Poison', 'Dark', 'Psychic', 'Bug', 'Fighting', 'Normal', 'Flying', 'Ice'];
   final List<String> regions = ['Kanto', 'Johto', 'Hoenn', 'Sinnoh', 'Unovah', 'Kalos', 'Alola', 'Galar', 'Paldea'];
 
@@ -41,7 +53,6 @@ class _GuestState extends State<Guest> {
     passwordController.text = '';
     confirmPasswordController.text = '';
     setState(() {
-      email = '';
       password = '';
       confirmPassword = '';
       loginError = (loginReload) ? loginError : '';
@@ -154,7 +165,6 @@ class _GuestState extends State<Guest> {
     passwordController.text = '';
     confirmPasswordController.text = '';
     setState(() {
-      email = '';
       password = '';
       confirmPassword = '';
       signUpError = (signUpReload) ? signUpError : '';
@@ -241,7 +251,7 @@ class _GuestState extends State<Guest> {
                       labelText: 'Confirm Password',
                       border: OutlineInputBorder(),
                     ),
-                    validator: (val) => val != password || val!.isEmpty ? 'Incorrect Password' : null,
+                    validator: (val) => val != password || val!.isEmpty ? "Password doesn't match" : null,
                     onChanged: (val) {
                       setState(() => confirmPassword = val);
                     },
@@ -269,27 +279,13 @@ class _GuestState extends State<Guest> {
               child: const Text('Close'), // Close button
             ),
             ElevatedButton(
-              onPressed: () async {
-                // Perform sign-up functionality here
-                if (signupFormKey.currentState!.validate()) {
-
-                  Navigator.of(context).pop();
-                  setState(() => loading = true);
-
-                  dynamic result = await _auth.registerWithEmailAndPassword(email, password);
-
-                  if (result == "[firebase_auth/email-already-in-use] The email address is already in use by another account." || result == "[firebase_auth/invalid-email] The email address is badly formatted.") {
-                    setState(() {
-                      signUpError = result == "[firebase_auth/email-already-in-use] The email address is already in use by another account." ? 'Email is already in use' : 'Invalid Email';
-                      signUpReload = true;
-                      loading = false;
-                    });
-                    signUpForm();
+                onPressed: () {
+                  if (signupFormKey.currentState!.validate()) {
+                    Navigator.of(context).pop();
+                    newRegisterForm();
                   }
-
-                }
-              },
-              child: const Text('Sign Up', style: TextStyle(color: Colors.orange)),
+                },
+                child: const Text('Next', style: TextStyle(color: Colors.orange)),
             ),
           ],
         );
@@ -304,13 +300,6 @@ class _GuestState extends State<Guest> {
 
     passwordController.text = '';
     confirmPasswordController.text = '';
-    setState(() {
-      email = '';
-      password = '';
-      confirmPassword = '';
-      signUpError = (signUpReload) ? signUpError : '';
-      signUpReload = false;
-    });
 
     showDialog(
       context: context,
@@ -326,152 +315,209 @@ class _GuestState extends State<Guest> {
           ),
           content: SingleChildScrollView(
             child: Form(
-                key: newRegisterFormKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextFormField(
-                      controller: _usernameController,
-                      decoration: const InputDecoration(labelText: 'Name'),
-                      validator: (val) {
-                        if (val == null || val.isEmpty) {
-                          return 'Please enter a valid age';
-                        }
-                        return null;
-                      },
-                    ),
-                    TextFormField(
-                      keyboardType: TextInputType.number,
-                      controller: _ageController,
-                      decoration: const InputDecoration(labelText: 'Age'),
-                      validator: (val) {
-                        if (val == null || val.isEmpty) {
-                          return 'Please enter a valid age';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    // Dropdown box for the "Looking" section
-                    const Text(
-                        'Gender',
-                        style: TextStyle(
-                          fontSize: 15,
-                        )
-                    ),
-                    DropdownButtonFormField<String>(
-                      value: _gender,
-                      onChanged: (val) {
-                        setState(() => _gender = val!);
-                      },
-                      items: genders.map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 10),
-                    // Dropdown box for the "Looking" section
-                    const Text(
-                        'Type Preference/s',
-                        style: TextStyle(
-                          fontSize: 15,
-                        )
-                    ),
-                    MultiSelectDialogField(
-                        title: const Column(
-                          children: [
-                            Text(
-                              'Types',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold
-                              ),
+              key: newRegisterFormKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                      'Profile Pic',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      )
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      (newPfp) ? CircleAvatar(
+                        radius: 60,
+                        backgroundImage: FileImage(File(_image.path)),
+                      ) : const CircleAvatar(
+                        radius: 60,
+                        backgroundImage: AssetImage('assets/defaultPfp.png'),
+                      ),
+                      const SizedBox(width: 15),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                                horizontal: 25
                             ),
-                            SizedBox(height: 5),
-                            Divider(),
-                          ],
                         ),
-                        initialValue: _typePreferences,
-                        items: types.map((e) => MultiSelectItem(e, e)).toList(),
-                        itemsTextStyle: const TextStyle(
-                          color: Colors.white,
+                        onPressed: () async {
+                          if (newPfp) {
+                            setState(() {
+                              _image = XFile('');
+                              newPfp = false;
+                            });
+                          } else {
+                            final picker = ImagePicker();
+                            final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+                            setState(() {
+                              _image = pickedImage!;
+                              newPfp = true;
+                            });
+                          }
+                          Navigator.of(context).pop();
+                          newRegisterForm();
+                        },
+                        child: (newPfp) ? const Text('Clear') : const Text(
+                            'Choose from\nGallery',
+                            textAlign: TextAlign.center
                         ),
-                        selectedItemsTextStyle: const TextStyle(
-                          color: Colors.blue,
-                        ),
-                        selectedColor: Colors.blue,
-                        cancelText: const Text('Cancel', style: TextStyle(color: Colors.white),),
-                        confirmText: const Text('Save', style: TextStyle(color: Colors.white),),
-                        buttonText: const Text('Type/s', style: TextStyle(fontSize: 15),),
-                        onConfirm: (List<String> selected) {
-                          setState(() => _typePreferences = selected);
-                        }
-                    ),
-                    const SizedBox(height: 10),
-                    // Dropdown box for the "Looking" section
-                    const Text(
-                        'Region Preference/s',
-                        style: TextStyle(
-                          fontSize: 15,
+                      ),
+                    ],
+                  ),
+                  TextFormField(
+                    controller: _usernameController,
+                    decoration: const InputDecoration(
+                        labelText: 'Name',
+                        labelStyle: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         )
                     ),
-                    MultiSelectDialogField(
-                        title: const Column(
-                          children: [
-                            Text(
-                              'Regions',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold
-                              ),
-                            ),
-                            SizedBox(height: 5),
-                            Divider(),
-                          ],
-                        ),
-                        initialValue: _regionPreferences,
-                        items: regions.map((e) => MultiSelectItem(e, e)).toList(),
-                        itemsTextStyle: const TextStyle(
-                          color: Colors.white,
-                        ),
-                        selectedItemsTextStyle: const TextStyle(
-                          color: Colors.blue,
-                        ),
-                        selectedColor: Colors.blue,
-                        cancelText: const Text('Cancel', style: TextStyle(color: Colors.white),),
-                        confirmText: const Text('Save', style: TextStyle(color: Colors.white),),
-                        buttonText: const Text('Region/s', style: TextStyle(fontSize: 15),),
-                        onConfirm: (List<String> selected) {
-                          setState(() => _regionPreferences = selected);
-                        }
+                    validator: (val) {
+                      if (val == null || val.isEmpty) {
+                        return 'Please enter a valid age';
+                      } else if (val.contains(' ')){
+                        return 'No spaces allowed';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    controller: _ageController,
+                    decoration: const InputDecoration(
+                        labelText: 'Age',
+                        labelStyle: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        )
                     ),
-                    const SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            // Perform sign-up functionality here
-                            if (newRegisterFormKey.currentState!.validate()) {
-                              // _updateProfileAndPop();
-                            }
-                          },
-                          child: const Text('Save'),
-                        ),
-                      ],
-                    )
-                  ],
-                )
+                    validator: (val) {
+                      final digitRegex = RegExp(r'\d');
+                      if (val == null || val.isEmpty || !digitRegex.hasMatch(val)) {
+                        return 'Please enter a valid age';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                      'Gender',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      )
+                  ),
+                  DropdownButtonFormField<String>(
+                    value: _gender,
+                    onChanged: (val) {
+                      setState(() => _gender = val!);
+                    },
+                    items: genders.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                      'Type Preference/s',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      )
+                  ),
+                  MultiSelectDialogField(
+                      title: const Column(
+                        children: [
+                          Text(
+                            'Types',
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Divider(),
+                        ],
+                      ),
+                      initialValue: _typePreferences,
+                      items: types.map((e) => MultiSelectItem(e, e)).toList(),
+                      itemsTextStyle: const TextStyle(
+                        color: Colors.white,
+                      ),
+                      selectedItemsTextStyle: const TextStyle(
+                        color: Colors.blue,
+                      ),
+                      selectedColor: Colors.blue,
+                      cancelText: const Text('Cancel', style: TextStyle(color: Colors.white),),
+                      confirmText: const Text('Save', style: TextStyle(color: Colors.white),),
+                      buttonText: const Text('Type/s', style: TextStyle(fontSize: 15),),
+                      onConfirm: (List<String> selected) {
+                        setState(() {
+                          selected.remove('');
+                          _typePreferences = selected;
+                        });
+                      }
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                      'Region Preference/s',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      )
+                  ),
+                  MultiSelectDialogField(
+                      title: const Column(
+                        children: [
+                          Text(
+                            'Regions',
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Divider(),
+                        ],
+                      ),
+                      initialValue: _regionPreferences,
+                      items: regions.map((e) => MultiSelectItem(e, e)).toList(),
+                      itemsTextStyle: const TextStyle(
+                        color: Colors.white,
+                      ),
+                      selectedItemsTextStyle: const TextStyle(
+                        color: Colors.blue,
+                      ),
+                      selectedColor: Colors.blue,
+                      cancelText: const Text('Cancel', style: TextStyle(color: Colors.white),),
+                      confirmText: const Text('Save', style: TextStyle(color: Colors.white),),
+                      buttonText: const Text('Region/s', style: TextStyle(fontSize: 15),),
+                      onConfirm: (List<String> selected) {
+                        setState(() {
+                          selected.remove('');
+                          _regionPreferences = selected;
+                        });
+                      }
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
             ),
           ),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                signUpForm();
               },
-              child: const Text('Close'), // Close button
+              child: const Text('Back'), // Close button
             ),
             ElevatedButton(
               onPressed: () async {
@@ -481,7 +527,17 @@ class _GuestState extends State<Guest> {
                   Navigator.of(context).pop();
                   setState(() => loading = true);
 
-                  dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+                  dynamic result = await _auth.registerWithEmailAndPassword(
+                      email,
+                      password,
+                      newPfp,
+                      _image,
+                      _usernameController.text.trim(),
+                      _ageController.text.trim(),
+                      _gender,
+                      _typePreferences.join('/').toString(),
+                      _regionPreferences.join('/').toString()
+                  );
 
                   if (result == "[firebase_auth/email-already-in-use] The email address is already in use by another account." || result == "[firebase_auth/invalid-email] The email address is badly formatted.") {
                     setState(() {
@@ -567,27 +623,6 @@ class _GuestState extends State<Guest> {
                       onPressed: () async {
 
                         logInForm();
-
-                        // dynamic result = await _auth.signInAnon();
-                        //
-                        // if (result == null) {
-                        //   print('Error signing in');
-                        // } else {
-                        //   // Add your login functionality here
-                        //   Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //       builder: (context) => const EditProfileScreen(
-                        //         initialUsername: '',
-                        //         initialAge: '',
-                        //         initialGender: 'Male',
-                        //         initialTypePreferences: '',
-                        //         initialRegionPreferences: '',
-                        //         newRegister: true,
-                        //       ),
-                        //     ),
-                        //   );
-                        // }
                       },
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
