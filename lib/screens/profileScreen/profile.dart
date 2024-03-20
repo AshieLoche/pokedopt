@@ -52,7 +52,7 @@ class ProfileState extends State<Profile> {
           ),
           BottomNavigationBarItem(
             icon: ImageIcon(AssetImage('assets/pokedopt.ico'),color: Colors.orange,),
-            label: 'PokeHome',
+            label: 'PokeDopt',
           ),
         ],
         onTap: (int index) {

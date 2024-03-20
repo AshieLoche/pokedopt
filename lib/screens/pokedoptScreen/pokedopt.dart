@@ -89,7 +89,7 @@ class PokeDoptState extends State<PokeDopt> {
                 Navigator.pushNamed(context, '/Profile');
                 break;
               case 1:
-                Navigator.pushNamed(context, '/PokeHome');
+                Navigator.pushNamed(context, '/PokeDopt');
                 break;
               case 2:
                 Navigator.push(

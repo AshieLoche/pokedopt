@@ -58,39 +58,96 @@ class PokemonCardContentState extends State<PokemonCardContent> {
       builder: (BuildContext context) {
         return Dialog(
           child: SizedBox(
-            height: 450, // Adjust the height as needed
-            child: ListView.builder(
-              itemCount: widget.likedPokemonList.length,
-              itemBuilder: (context, index) {
-                final likedPokemon = widget.likedPokemonList[index];
-                return Card(
-                  child: ListTile(
-                    leading: FutureBuilder<String>(
-                      future: getImageURL(likedPokemon.imageURL),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return CircleAvatar(
-                            backgroundImage: NetworkImage(snapshot.data!),
-                          );
-                        } else if (snapshot.hasError) {
-                          return const Icon(Icons.error);
-                        }
-                        return const CircularProgressIndicator();
-                      },
+            width: MediaQuery.of(context).size.width * 0.8, // Adjust the width as needed
+            height: MediaQuery.of(context).size.height * 0.6, // Adjust the height as needed
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Text(
+                    'PokeList',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
-                    title: Text(likedPokemon.name),
-                    onTap: () {
-                      // Handle tapping on a liked Pokemon card
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: widget.likedPokemonList.length,
+                    itemBuilder: (context, index) {
+                      final likedPokemon = widget.likedPokemonList[index];
+                      return Card(
+                        child: ListTile(
+                          leading: FutureBuilder<String>(
+                            future: getImageURL(likedPokemon.imageURL),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return CircleAvatar(
+                                  backgroundImage: NetworkImage(snapshot.data!),
+                                );
+                              } else if (snapshot.hasError) {
+                                return const Icon(Icons.error);
+                              }
+                              return const CircularProgressIndicator();
+                            },
+                          ),
+                          title: Text(likedPokemon.name),
+                          onTap: () {
+                            // Open another popup box displaying full details of the Pokemon
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text(likedPokemon.name),
+                                  content: SingleChildScrollView(
+                                    child: ListBody(
+                                      children: <Widget>[
+                                        Text('Species: ${likedPokemon.species}'),
+                                        Text('Region: ${likedPokemon.region}'),
+                                        Text('Type: ${likedPokemon.types}'),
+                                        // Add more details as needed
+                                      ],
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: const Text('Close'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+
+                          },
+                        ),
+                      );
                     },
                   ),
-                );
-              },
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Close'),
+                  ),
+                ),
+              ],
             ),
           ),
         );
       },
     );
   }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
