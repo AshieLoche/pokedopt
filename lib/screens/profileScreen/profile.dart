@@ -54,10 +54,6 @@ class ProfileState extends State<Profile> {
             icon: ImageIcon(AssetImage('assets/pokedopt.ico'),color: Colors.orange,),
             label: 'PokeHome',
           ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/pokepals.ico'),color: Colors.orange,),
-            label: 'PokeList',
-          ),
         ],
         onTap: (int index) {
           switch (index) {
