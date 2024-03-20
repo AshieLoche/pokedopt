@@ -1,11 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedopt/screens/pokedoptScreen/pokemonCardContent.dart';
 import 'package:provider/provider.dart';
 import '../../models/pokemon.dart';
-import '../../services/database.dart';
 
 class PokemonCard extends StatefulWidget {
   const PokemonCard({super.key});

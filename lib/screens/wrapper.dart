@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:pokedopt/models/user.dart';
 import 'package:pokedopt/screens/pokedoptScreen/pokedopt.dart';
 import 'package:provider/provider.dart';
-import '../services/auth.dart';
 import 'authenticate/authenticate.dart';
 
 class Wrapper extends StatelessWidget {

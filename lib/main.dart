@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedopt/models/user.dart';
-import 'package:pokedopt/screens/pokelistScreen/pokelist.dart';
 import 'package:pokedopt/screens/pokedoptScreen/pokedopt.dart';
 import 'package:pokedopt/screens/profileScreen/profile.dart';
 import 'package:pokedopt/screens/wrapper.dart';

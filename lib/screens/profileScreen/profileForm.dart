@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
@@ -140,18 +138,15 @@ class _ProfileFormState extends State<ProfileForm> {
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(),
                                 onPressed: () async {
-
                                   if (newPfp) {
-                                    _image = XFile('');
                                     setState(() => newPfp = false);
                                   } else {
                                     final picker = ImagePicker();
                                     final pickedImage = await picker.pickImage(source: ImageSource.gallery);
                                     setState(() {
-
                                       _image = pickedImage!;
+                                      newPfp = true;
                                     });
-                                    setState(() => newPfp = true);
                                   }
                                 },
                                 child: (newPfp) ? const Text('Clear') : const Text('Choose from Gallery'),
@@ -307,8 +302,8 @@ class _ProfileFormState extends State<ProfileForm> {
 
                                     await DatabaseService(uid: user.uid).updateUserData(
                                         (newPfp) ? await DatabaseService().uploadPfpImage(_image, user.uid) : _image.path,
-                                      _usernameController.text,
-                                      _ageController.text,
+                                      _usernameController.text.trim(),
+                                      _ageController.text.trim(),
                                       _gender,
                                       _typePreferences.join('/').toString(),
                                       _regionPreferences.join('/').toString(),

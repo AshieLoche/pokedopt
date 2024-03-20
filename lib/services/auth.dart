@@ -1,9 +1,12 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pokedopt/services/database.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:flutter/foundation.dart';
+
+import 'database.dart';
 
 class AuthService {
 
@@ -50,13 +53,21 @@ class AuthService {
   }
 
   // Register with email & password
-  Future registerWithEmailAndPassword(String email, String password) async {
+  Future registerWithEmailAndPassword(String email, String password, bool newPfp, XFile pfp, String username, String age, String gender, String typePreferences, String regionPreferences) async {
     try {
       firebase.UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       firebase.User? user = result.user;
 
       // Call updateUserData with userId and userData Map
-      await DatabaseService().updateUserData('0', 'Ash Ketchum', '21', 'Male', 'Ghost', 'Kalos', Timestamp.now());
+      await DatabaseService(uid: user!.uid).updateUserData(
+        (newPfp) ? await DatabaseService().uploadPfpImage(pfp, user.uid) : 'profilePics/defaultPfp.png',
+        username,
+        age,
+        gender,
+        typePreferences,
+        regionPreferences,
+        Timestamp.now(),
+      );
 
       return _userFromFirebaseUser(user);
     } catch (e) {

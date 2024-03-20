@@ -1,11 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:pokedopt/models/user.dart';
 import 'package:pokedopt/screens/profileScreen/profileForm.dart';
 import 'package:pokedopt/services/database.dart';
 import 'package:provider/provider.dart';
-import 'package:multi_select_flutter/multi_select_flutter.dart';
 
 import '../../shared/loading.dart';
 
@@ -67,6 +64,7 @@ class _ProfileDataState extends State<ProfileData> {
           gender = userData.gender;
           typePreferences = userData.typePreferences;
           regionPreferences = userData.regionPreferences;
+          imageUrl = DatabaseService().getImageURL(userData.pfpUrl);
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Column(
