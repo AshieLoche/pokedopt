@@ -59,35 +59,15 @@ class PokeDoptState extends State<PokeDopt> {
             SizedBox(width: 48),
           ],
         ),
-        body: Column(
+        body: const Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () {},
-                      child: IconButton(
-                        icon: const Icon(Icons.search),
-                        onPressed: () {},
-                      ),
-                    ),
-                  ],
-                ),
-                InkWell(
-                  onTap: () {},
-                  child: IconButton(
-                    icon: const Icon(Icons.filter_alt),
-                    onPressed: () {},
-                  ),
-                ),
-              ],
             ),
-            const SizedBox(height: 10),
-            const Expanded(
+            SizedBox(height: 10),
+            Expanded(
               child: PokemonCard(),
             ),
           ],

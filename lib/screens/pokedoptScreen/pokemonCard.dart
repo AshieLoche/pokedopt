@@ -32,6 +32,7 @@ class PokemonCardState extends State<PokemonCard> {
   Widget build(BuildContext context) {
     final pokemons = Provider.of<List<Pokemon>>(context);
 
+
     return PageView.builder(
       scrollDirection: Axis.horizontal,
       itemCount: pokemons.length,
