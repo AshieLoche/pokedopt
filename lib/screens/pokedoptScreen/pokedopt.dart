@@ -26,22 +26,18 @@ class PokeDoptState extends State<PokeDopt> {
           automaticallyImplyLeading: false,
           title: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(width: 52),
               ImageIcon(AssetImage('assets/pokedopt.ico')),
               SizedBox(width: 3),
               Text('PokeDopt'),
-              SizedBox(width: 1),
             ],
           ),
-          actions: const [
-            SizedBox(width: 48),
-          ],
         ),
         body: const Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 10),
+            Divider(),
             Expanded(
               child: PokemonCard(),
             ),
@@ -71,12 +67,7 @@ class PokeDoptState extends State<PokeDopt> {
                 Navigator.pushNamed(context, '/PokeHome');
                 break;
               case 2:
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => PokeList(likedPokemons: likedPokemons),
-                //   ),
-                // );
+                Navigator.pushNamed(context, '/PokeList');
                 break;
             }
           },

@@ -1,21 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:pokedopt/services/database.dart';
 import 'package:pokedopt/shared/loading.dart';
+import 'package:provider/provider.dart';
 import '../../models/pokemon.dart';
+import '../../models/user.dart';
 
-class PokemonCardContent extends StatelessWidget {
+class PokemonCardContent extends StatefulWidget {
 
-  final bool isLiked = false;
   final Pokemon pokemon;
-
   const PokemonCardContent({
     super.key,
     required this.pokemon,
   });
 
   @override
+  State<PokemonCardContent> createState() => _PokemonCardContentState();
+}
+
+class _PokemonCardContentState extends State<PokemonCardContent> {
+
+  late Pokemon pokemon;
+  late bool _isFavourited;
+
+  @override
+  void initState() {
+    super.initState();
+    _isFavourited = false;
+    pokemon = widget.pokemon;
+  }
+
+  @override
   Widget build(BuildContext context) {
     Future<String> imageUrl = DatabaseService().getImageURL(pokemon.imageURL);
+    final user = Provider.of<User?>(context);
 
     return SizedBox(
       width: MediaQuery.of(context).size.width * 1,
@@ -26,27 +43,34 @@ class PokemonCardContent extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 7.0),
+                  padding: const EdgeInsets.only(top: 10.0),
                   child: FutureBuilder<String>(
                     future: imageUrl,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         return Container(
-                            width: 250,
-                            height: 250,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(snapshot.data!),
-                              ),
+                          width: 380,
+                          height: 250,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(snapshot.data!),
                             ),
-                          );
+                          ),
+                        );
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       }
                       // Display a progress indicator or placeholder while loading
-                      return const Loading();
+                      return Container(
+                        width: 380,
+                        height: 250,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: const Loading(),
+                      );
                     },
                   ),
                 ),
@@ -75,15 +99,16 @@ class PokemonCardContent extends StatelessWidget {
                 children: [
                   IconButton(
                     icon: Icon(
-                      isLiked ? Icons.favorite : Icons.favorite_border,
-                      color: isLiked ? Colors.red : Colors.grey,
+                      _isFavourited ? Icons.favorite : Icons.favorite_border,
+                      color: _isFavourited ? Colors.red : Colors.grey,
                     ),
-                    onPressed: () {
-                      // setState(() {
-                      //   isLiked = !isLiked;
-                      //   widget.onLiked(widget.pokemon); // Pass the entire Pokemon object
-                      // });
-                    },
+                    iconSize: 50,
+                    onPressed: () async {
+                      setState(() {
+                        _isFavourited = !_isFavourited;
+                      });
+                      await DatabaseService(uid: user!.uid).updateFavouriteData(pokemon.id, pokemon.name, _isFavourited);
+                    }
                   ),
                 ],
               ),
@@ -91,8 +116,6 @@ class PokemonCardContent extends StatelessWidget {
           ],
         ),
       ),
-
     );
-
   }
 }

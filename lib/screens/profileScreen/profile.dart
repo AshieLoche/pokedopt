@@ -64,7 +64,7 @@ class ProfileState extends State<Profile> {
               break;
             case 1:
               // Handle PokeHome icon tap
-              Navigator.pushNamed(context, '/PokeDopt');
+              Navigator.pushNamed(context, '/PokeHome');
               break;
             case 2:
               // Handle PokeList icon tap

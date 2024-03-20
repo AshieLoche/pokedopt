@@ -128,9 +128,13 @@ class _ProfileFormState extends State<ProfileForm> {
                                     );
                                   }
                                   // Display a progress indicator or placeholder while loading
-                                  return const CircleAvatar(
-                                    radius: 60,
-                                    child: Loading(),
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(120.0), // Circular clipping
+                                    child: const SizedBox(
+                                      width: 120.0,
+                                      height: 120.0,
+                                      child: Loading(), // Your loading indicator widget
+                                    ),
                                   );
                                 },
                               ),

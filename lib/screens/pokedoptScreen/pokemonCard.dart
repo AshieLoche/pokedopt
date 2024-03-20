@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedopt/screens/pokedoptScreen/pokemonCardContent.dart';
 import 'package:provider/provider.dart';
@@ -6,17 +5,6 @@ import '../../models/pokemon.dart';
 
 class PokemonCard extends StatefulWidget {
   const PokemonCard({super.key});
-
-  // final Pokemon pokemon;
-  // final Function(Pokemon) onLiked;
-  // final String description;
-  //
-  // const PokemonCard({
-  //   super.key,
-  //   required this.pokemon,
-  //   required this.onLiked,
-  //   required this.description,
-  // });
 
   @override
   PokemonCardState createState() => PokemonCardState();
